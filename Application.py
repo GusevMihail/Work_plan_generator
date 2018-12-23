@@ -36,12 +36,32 @@ def extract_month_and_year(raw_date: str):
                    'октябрь': 10,
                    'ноябрь': 11,
                    'декабрь': 12}
+    month = None
     for m_name, m_num in month_names.items():
         if m_name in raw_date.lower():
             month = int(m_num)
     year = int(re.findall(r'\d+', raw_date)[0])
     # print(raw_date, month, year)  # debug
     return month, year
+
+def extract_place (raw_place: str):
+    places_names = {'В1': 'В1',
+                    'В2': 'В2',
+                    'В3': 'В3',
+                    'В4': 'В4',
+                    'В5': 'В5',
+                    'В6': 'В6',
+                    'ЗУ КЗС': 'Здание управления КЗС',
+                    'Здание управления': 'Здание управления КЗС',
+                    'АМ': 'С2 АМ',
+                    '': '',
+                    '': '',
+                    '': '',
+                    '': '',
+                    '': '',
+
+
+    }
 
 
 def parser_asu(file_path: Path):
@@ -69,15 +89,23 @@ def parser_asu(file_path: Path):
         print(sheet.title, origin.row, origin.col_idx, raw_month,
               month, year)  # debug
 
+        end_data_row = origin.row
         for i_row in range(origin.row, origin.row + 20):
-            if sheet.cell(i_row,1) is None:
-                end_data_row = i_row
+            if sheet.cell(i_row, 1).value is None:
+                end_data_row: int = i_row - 1
                 break
         print(end_data_row)
 
-        for i_row in range(origin.row, origin.row + 40):
-            place = sheet.cell(i_row, 2).value
-            print(place)
+        end_data_col = origin.col_idx
+        for i_col in range(origin.col_idx, origin.col_idx + 40):
+            if sheet.cell(origin.row - 1, i_col).value is None:
+                end_data_col = i_col - 1
+                break
+        print(f' end data col {end_data_col}; last date {sheet.cell(origin.row - 1, end_data_col).value}')
+
+        # for i_row in range(origin.row, end_data_row + 1):
+        #     place = sheet.cell(i_row, 2).value
+        #     print(place)
 
     wb = openpyxl.load_workbook(str(file_path))
     # print(wb.sheetnames)  # debug
@@ -88,5 +116,6 @@ def parser_asu(file_path: Path):
 
 
 if __name__ == "__main__":
-    jobs_schedule_asu = Path(r"c:\Users\Mihail\Documents\Гусев М.В\Планы работ\Графики ТО\5. Графики на 05.18 АСУ.XLSX")
+    jobs_schedule_asu = Path(
+        r"c:\Users\Mihail\PycharmProjects\Work_plan_generator\input data\\5. Графики на 05.18 АСУ.xlsx")
     parser_asu(jobs_schedule_asu)
