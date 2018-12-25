@@ -58,18 +58,24 @@ def extract_place (raw_place: str):
                     r'.*?С1 Север$': 'С1 Север',
                     r'.*?С1 Юг$': 'С1 Юг',
                     'С1\W{,3}ТП4\W{,3}': 'С1 ТП4',
-                    '': '',
-                    '': '',
-                    '': '',
-
-
-    }
+                    # '': '',
+                    # '': '',
+                    # '': '',
+                    }
 
     raw_place = raw_place.strip(' ,.\t\n')
     str.replace(raw_place, 'север', 'Север')
     str.replace(raw_place, 'юг', 'Юг')
     str.replace(raw_place, '(', '')
     str.replace(raw_place, ')', '')
+
+    for i_template, i_place in places_names:
+        if i_template in raw_place:
+            return i_place
+    else:
+        print('нет совпадений в словаре')  # debug
+        return raw_place  # temp code
+
     return raw_place
 
 
