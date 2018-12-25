@@ -45,23 +45,33 @@ def extract_month_and_year(raw_date: str):
     return month, year
 
 def extract_place (raw_place: str):
-    places_names = {'В1': 'В1',
-                    'В2': 'В2',
-                    'В3': 'В3',
-                    'В4': 'В4',
-                    'В5': 'В5',
-                    'В6': 'В6',
+    places_names = {r'В\W{,3}1': 'В1',
+                    r'В\W{,3}2': 'В2',
+                    r'В\W{,3}3': 'В3',
+                    r'В\W{,3}З': 'В3',
+                    r'В\W{,3}4': 'В4',
+                    r'В\W{,3}5': 'В5',
+                    r'В\W{,3}6': 'В6',
                     'ЗУ КЗС': 'Здание управления КЗС',
                     'Здание управления': 'Здание управления КЗС',
                     'АМ': 'С2 АМ',
-                    '': '',
-                    '': '',
+                    r'.*?С1 Север$': 'С1 Север',
+                    r'.*?С1 Юг$': 'С1 Юг',
+                    'С1\W{,3}ТП4\W{,3}': 'С1 ТП4',
                     '': '',
                     '': '',
                     '': '',
 
 
     }
+
+    raw_place = raw_place.strip(' ,.\t')
+    str.replace(raw_place, 'север', 'Север')
+    str.replace(raw_place, 'юг', 'Юг')
+    str.replace(raw_place, '(', '')
+    str.replace(raw_place, ')', '')
+
+
 
 
 def parser_asu(file_path: Path):
