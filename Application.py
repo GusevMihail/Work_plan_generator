@@ -65,11 +65,12 @@ def extract_place (raw_place: str):
 
     }
 
-    raw_place = raw_place.strip(' ,.\t')
+    raw_place = raw_place.strip(' ,.\t\n')
     str.replace(raw_place, 'север', 'Север')
     str.replace(raw_place, 'юг', 'Юг')
     str.replace(raw_place, '(', '')
     str.replace(raw_place, ')', '')
+    return raw_place
 
 
 
@@ -128,4 +129,9 @@ def parser_asu(file_path: Path):
 if __name__ == "__main__":
     jobs_schedule_asu = Path(
         r"c:\Users\Mihail\PycharmProjects\Work_plan_generator\input data\\5. Графики на 05.18 АСУ.xlsx")
-    parser_asu(jobs_schedule_asu)
+    # parser_asu(jobs_schedule_asu)
+
+    test_raw_places = open('test raw places.txt')
+    for line in test_raw_places:
+        print(f'{line}  -->>  {extract_place(line)}')
+    # print(extract_place(''))
