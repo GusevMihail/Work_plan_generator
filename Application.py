@@ -44,41 +44,35 @@ def extract_month_and_year(raw_date: str):
     # print(raw_date, month, year)  # debug
     return month, year
 
-def extract_place (raw_place: str):
-    places_names = {r'В\W{,3}1': 'В1',
-                    r'В\W{,3}2': 'В2',
-                    r'В\W{,3}3': 'В3',
-                    r'В\W{,3}З': 'В3',
-                    r'В\W{,3}4': 'В4',
-                    r'В\W{,3}5': 'В5',
-                    r'В\W{,3}6': 'В6',
-                    'ЗУ КЗС': 'Здание управления КЗС',
+
+def extract_place(raw_place: str):
+    places_names = {'ЗУ КЗС': 'Здание управления КЗС',
                     'Здание управления': 'Здание управления КЗС',
                     'АМ': 'С2 АМ',
-                    r'.*?С1 Север$': 'С1 Север',
-                    r'.*?С1 Юг$': 'С1 Юг',
-                    'С1\W{,3}ТП4\W{,3}': 'С1 ТП4',
-                    # '': '',
-                    # '': '',
-                    # '': '',
                     }
 
     raw_place = raw_place.strip(' ,.\t\n')
+    str.replace(raw_place, 'c', 'с')  # Eng to Rus
+    str.replace(raw_place, 'C', 'С')  # Eng to Rus
     str.replace(raw_place, 'север', 'Север')
     str.replace(raw_place, 'юг', 'Юг')
     str.replace(raw_place, '(', '')
     str.replace(raw_place, ')', '')
 
-    for i_template, i_place in places_names:
+    for i_template, i_place in places_names.items():
         if i_template in raw_place:
             return i_place
+
+    search_obj = re.search(r'В\W{,3}(\d)', raw_place)
+    if search_obj:
+        return 'В'+search_obj.group(1)
+
+    search_obj = re.search(r'(С\d)(.*)', raw_place)
+    if search_obj:
+        return ''.join(search_obj.groups())
     else:
-        print('нет совпадений в словаре')  # debug
-        return raw_place  # temp code
-
-    return raw_place
-
-
+        print('нет совпадений с шаблоном')  # debug
+        return raw_place
 
 
 def parser_asu(file_path: Path):
@@ -140,4 +134,4 @@ if __name__ == "__main__":
     test_raw_places = open('test raw places.txt')
     for line in test_raw_places:
         print(f'{line}  -->>  {extract_place(line)}')
-    # print(extract_place(''))
+    # print(extract_place('Судопропускное сооружение Са1 Юг ДКФ'))
