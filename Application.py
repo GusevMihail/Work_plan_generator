@@ -39,7 +39,7 @@ def extract_month_and_year(raw_date: str):
     month = None
     for m_name, m_num in month_names.items():
         if m_name in raw_date.lower():
-            month = int(m_num)
+            month = m_num
     year = int(re.findall(r'\d+', raw_date)[0])
     # print(raw_date, month, year)  # debug
     return month, year
