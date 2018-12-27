@@ -46,33 +46,36 @@ def extract_month_and_year(raw_date: str):
 
 
 def extract_place(raw_place: str):
-    places_names = {'ЗУ КЗС': 'Здание управления КЗС',
-                    'Здание управления': 'Здание управления КЗС',
-                    'АМ': 'С2 АМ',
+    places_names = {'ЗУ КЗС': ('Здание управления КЗС', 'ЗУ'),
+                    'Здание управления': ('Здание управления КЗС', 'ЗУ'),
+                    'АМ': ('С2 АМ', 'С2'),
                     }
 
     raw_place = raw_place.strip(' ,.\t\n')
-    str.replace(raw_place, 'c', 'с')  # Eng to Rus
-    str.replace(raw_place, 'C', 'С')  # Eng to Rus
-    str.replace(raw_place, 'север', 'Север')
-    str.replace(raw_place, 'юг', 'Юг')
-    str.replace(raw_place, '(', '')
-    str.replace(raw_place, ')', '')
+    raw_place = str.replace(raw_place, 'c', 'с')    # Eng to Rus
+    raw_place = str.replace(raw_place, 'C', 'С')    # Eng to Rus
+    raw_place = str.replace(raw_place, 'ВЗ', 'В3')  # Letter to Num
+    raw_place = str.replace(raw_place, 'север', 'Север')
+    raw_place = str.replace(raw_place, 'юг', 'Юг')
+    raw_place = str.replace(raw_place, '(', '')
+    raw_place = str.replace(raw_place, ')', '')
 
     for i_template, i_place in places_names.items():
         if i_template in raw_place:
             return i_place
 
+    # find В1..В6 objects
     search_obj = re.search(r'В\W{,3}(\d)', raw_place)
     if search_obj:
-        return 'В'+search_obj.group(1)
+        return 'В' + search_obj.group(1), 'В' + search_obj.group(1)
 
+    # find С1, С2 objects
     search_obj = re.search(r'(С\d)(.*)', raw_place)
     if search_obj:
-        return ''.join(search_obj.groups())
+        return ''.join(search_obj.groups()), search_obj.group(1)
     else:
         print('нет совпадений с шаблоном')  # debug
-        return raw_place
+        return raw_place, 'unknown'
 
 
 def parser_asu(file_path: Path):
