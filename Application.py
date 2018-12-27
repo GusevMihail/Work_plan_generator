@@ -52,13 +52,13 @@ def extract_place(raw_place: str):
                     }
 
     raw_place = raw_place.strip(' ,.\t\n')
-    raw_place = str.replace(raw_place, 'c', 'с')    # Eng to Rus
-    raw_place = str.replace(raw_place, 'C', 'С')    # Eng to Rus
-    raw_place = str.replace(raw_place, 'ВЗ', 'В3')  # Letter to Num
-    raw_place = str.replace(raw_place, 'север', 'Север')
-    raw_place = str.replace(raw_place, 'юг', 'Юг')
-    raw_place = str.replace(raw_place, '(', '')
-    raw_place = str.replace(raw_place, ')', '')
+    raw_place = raw_place.replace('c', 'с')    # Eng to Rus
+    raw_place = raw_place.replace('C', 'С')    # Eng to Rus
+    raw_place = raw_place.replace('ВЗ', 'В3')  # Letter to Num
+    raw_place = raw_place.replace('север', 'Север')
+    raw_place = raw_place.replace('юг', 'Юг')
+    raw_place = raw_place.replace('(', '')
+    raw_place = raw_place.replace(')', '')
 
     for i_template, i_place in places_names.items():
         if i_template in raw_place:
