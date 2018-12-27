@@ -122,11 +122,11 @@ def parser_asu(file_path: Path):
         #     print(place)
 
     wb = openpyxl.load_workbook(str(file_path))
-    # print(wb.sheetnames)  # debug
     for sheet_name in wb.sheetnames:  # find necessary worksheets by names
         for name, system in sheet_names.items():
             if name in sheet_name:
                 parse_sheet(wb[sheet_name], system)
+                break
 
 
 if __name__ == "__main__":
