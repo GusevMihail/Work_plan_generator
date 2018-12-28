@@ -2,7 +2,18 @@ from pathlib import Path
 
 import openpyxl
 from openpyxl.worksheet import Worksheet
-from Application import Job, extract_month_and_year
+from Application import Job
+from Pre_processing import extract_month_and_year
+
+
+class raw_data:
+    def __init__(self):
+        self.date = None
+        self.object = None
+        self.system = None
+        self.work_type = None
+        self.place = None
+
 
 def xstr(cell_value):
     if cell_value is None:
@@ -10,16 +21,14 @@ def xstr(cell_value):
     else:
         return str(cell_value)
 
+
 def parser_asu(file_path: Path):
     sheet_names = {'АСУ ТП': 'АСУ ТП',
                    'АСУ И': 'АСУ И',
                    'МОСТ': 'АСУ АМ',
                    'ЛВС': 'ЛВС'}
 
-    def parse_sheet(sheet: Worksheet, system: str) -> [Job]:
-        # print(f'sheet: {sheet.title}')
-        # print(f'system: {system}')
-        def find_data_boundaries():
+    def find_data_boundaries(sheet):
         data_first_row = 1
         data_first_col = 1
         for i_row in range(1, 30):
@@ -30,6 +39,7 @@ def parser_asu(file_path: Path):
                         data_first_col = i_col
                         break
                 break
+
 
         data_last_row = data_first_row
         for i_row in range(data_first_row, data_first_row + 20):
@@ -42,6 +52,10 @@ def parser_asu(file_path: Path):
             if sheet.cell(data_first_row - 1, i_col).value is None:
                 data_last_col = i_col - 1
                 break
+
+    def parse_sheet(sheet: Worksheet, system: str) -> [Job]:
+        # print(f'sheet: {sheet.title}')
+        # print(f'system: {system}')
 
         raw_month = sheet.cell(data_first_row - 2, data_first_col).value
         if raw_month is None:
