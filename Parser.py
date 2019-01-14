@@ -1,4 +1,5 @@
 from pathlib import Path
+from collections import namedtuple
 
 import openpyxl
 from openpyxl.worksheet import Worksheet
@@ -28,34 +29,37 @@ def parser_asu(file_path: Path):
                    'МОСТ': 'АСУ АМ',
                    'ЛВС': 'ЛВС'}
 
+    table_area = namedtuple('table_area', 'first_row first_col last_row last_col')
+
     def find_data_boundaries(sheet):
-        data_first_row = 1
-        data_first_col = 1
+        first_row = 1
+        first_col = 1
         for i_row in range(1, 30):
             if xstr(sheet.cell(i_row, 1).value) == "1":
                 for i_col in range(1, 30):
                     if xstr(sheet.cell(i_row - 1, i_col).value) == "1":
-                        data_first_row = i_row
-                        data_first_col = i_col
+                        first_row = i_row
+                        first_col = i_col
                         break
                 break
-
-
-        data_last_row = data_first_row
-        for i_row in range(data_first_row, data_first_row + 20):
+        last_row = first_row
+        for i_row in range(first_row, first_row + 20):
             if sheet.cell(i_row, 1).value is None:
-                data_last_row = i_row - 1
+                last_row = i_row - 1
                 break
-
-        data_last_col = data_first_col
-        for i_col in range(data_first_col, data_first_col + 40):
-            if sheet.cell(data_first_row - 1, i_col).value is None:
-                data_last_col = i_col - 1
+        last_col = first_col
+        for i_col in range(first_col, first_col + 40):
+            if sheet.cell(first_row - 1, i_col).value is None:
+                last_col = i_col - 1
                 break
+        data_area = table_area(first_row, first_col, last_row, last_col)
+        return data_area()
 
     def parse_sheet(sheet: Worksheet, system: str) -> [Job]:
         # print(f'sheet: {sheet.title}')
         # print(f'system: {system}')
+
+        data = find_data_boundaries(sheet)
 
         raw_month = sheet.cell(data_first_row - 2, data_first_col).value
         if raw_month is None:
@@ -65,9 +69,9 @@ def parser_asu(file_path: Path):
         print(sheet.title, data_first_row, data_first_col, raw_month,
               month, year)  # debug
 
-        print(f' end data col {data_last_col}; last date {sheet.cell(data_first_row - 1, data_last_col).value}')
+        print(f' end data col {last_col}; last date {sheet.cell(first_row - 1, last_col).value}')
 
-        # for i_row in range(data_first_row, data_last_row + 1):
+        # for i_row in range(first_row, last_row + 1):
         #     place = sheet.cell(i_row, 2).value
         #     print(place)
 
