@@ -7,13 +7,15 @@ from Application import Job
 from Pre_processing import extract_month_and_year
 
 
-class raw_data:
+class RawData:
     def __init__(self):
         self.date = None
         self.object = None
         self.system = None
         self.work_type = None
         self.place = None
+        self.sheet_name = None
+
 
 
 def xstr(cell_value):
@@ -23,15 +25,21 @@ def xstr(cell_value):
         return str(cell_value)
 
 
-def parser_asu(file_path: Path):
+table_area = namedtuple('table_area', 'first_row first_col last_row last_col')
+
+
+class ParserAsu:
     sheet_names = {'АСУ ТП': 'АСУ ТП',
                    'АСУ И': 'АСУ И',
                    'МОСТ': 'АСУ АМ',
                    'ЛВС': 'ЛВС'}
 
-    table_area = namedtuple('table_area', 'first_row first_col last_row last_col')
+    def __init__(self):
+        self.sheet = None
+        self.data_area = None
+        self.raw_data = []
 
-    def find_data_boundaries(sheet):
+    def find_data_boundaries(self, sheet):
         first_row = 1
         first_col = 1
         for i_row in range(1, 30):
@@ -52,32 +60,24 @@ def parser_asu(file_path: Path):
             if sheet.cell(first_row - 1, i_col).value is None:
                 last_col = i_col - 1
                 break
-        data_area = table_area(first_row, first_col, last_row, last_col)
-        return data_area()
+        self.data_area = table_area(first_row, first_col, last_row, last_col)
 
-    def parse_sheet(sheet: Worksheet, system: str) -> [Job]:
+    def parse_sheet(self, sheet: Worksheet, system: str):
         # print(f'sheet: {sheet.title}')
         # print(f'system: {system}')
 
-        data = find_data_boundaries(sheet)
-
-        raw_month = sheet.cell(data_first_row - 2, data_first_col).value
+        raw_month = sheet.cell(self.data_area.first_row - 2, self.data_area.first_col).value
         if raw_month is None:
-            raw_month = sheet.cell(data_first_row - 3, data_first_col).value
+            raw_month = sheet.cell(self.data_area.first_row - 3, self.data_area.first_col).value
         month, year = extract_month_and_year(raw_month)
 
-        print(sheet.title, data_first_row, data_first_col, raw_month,
-              month, year)  # debug
-
-        print(f' end data col {last_col}; last date {sheet.cell(first_row - 1, last_col).value}')
+        # print(sheet.title, data_first_row, data_first_col, raw_month,
+        #       month, year)  # debug
+        #
+        # print(f' end data col {last_col}; last date {sheet.cell(first_row - 1, last_col).value}')
 
         # for i_row in range(first_row, last_row + 1):
         #     place = sheet.cell(i_row, 2).value
         #     print(place)
 
-    wb = openpyxl.load_workbook(str(file_path))
-    for sheet_name in wb.sheetnames:  # find necessary worksheets by names
-        for name, system in sheet_names.items():
-            if name in sheet_name:
-                parse_sheet(wb[sheet_name], system)
-                break
+

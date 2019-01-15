@@ -22,3 +22,11 @@ if __name__ == "__main__":
     for line in test_raw_places:
         print(f'{line}  -->>  { extract_place(line)}')
     # print(extract_place('Судопропускное сооружение Са1 Юг ДКФ'))
+
+wb = openpyxl.load_workbook(str(file_path))
+for sheet_name in wb.sheetnames:  # find necessary worksheets by names
+    # TODO move system name finding to Pre_processing module
+    for name, system in sheet_names.items():
+        if name in sheet_name:
+            parse_sheet(wb[sheet_name], system)
+            break
