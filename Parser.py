@@ -9,12 +9,12 @@ from Pre_processing import extract_month_and_year
 
 class RawData:
     def __init__(self):
-        self.date = None
-        self.object = None
+        self.day = None
+        # self.object = None
         # self.system = None
         self.work_type = None
         self.place = None
-        self.sheet_name = None
+        # self.sheet_name = None
 
 
 def xstr(cell_value):
@@ -33,7 +33,7 @@ class ParserAsu:
         self.sheet = sheet
         self.data_area = None
         self.month_year = None
-        self.raw_data = [RawData(), ]
+        self.raw_data = []
 
     def find_data_boundaries(self):
         first_row = 1
@@ -62,3 +62,13 @@ class ParserAsu:
         self.month_year = self.sheet.cell(self.data_area.first_row - 2, self.data_area.first_col).value
         if self.month_year is None:
             self.month_year = self.sheet.cell(self.data_area.first_row - 3, self.data_area.first_col).value
+
+    def extract_jobs(self):
+        for i_row in range(self.data_area.first_row, self.data_area.last_row + 1):
+            raw_place = self.sheet.cell(i_row, 2)
+            for i_col in range(self.data_area.first_col, self.data_area.last_col + 1):
+                i_raw_data = RawData()
+                i_raw_data.place = raw_place
+                i_raw_data.day = self.sheet.cell(self.data_area.first_row + 1, i_col)
+                i_raw_data.work_type = self.sheet.cell(i_row, i_col)
+                self.raw_data.append(i_raw_data)
