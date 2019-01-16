@@ -54,3 +54,9 @@ def extract_place(raw_place: str):
     else:
         print('нет совпадений с шаблоном')  # debug
         return raw_place, 'unknown'
+
+
+sheet_names = {'АСУ ТП': 'АСУ ТП',
+               'АСУ И': 'АСУ И',
+               'МОСТ': 'АСУ АМ',
+               'ЛВС': 'ЛВС'}
