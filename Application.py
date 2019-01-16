@@ -14,10 +14,10 @@ class Job:
 
 
 if __name__ == "__main__":
-    jobs_schedule_asu = Path(
-        r"c:\Users\Mihail\PycharmProjects\Work_plan_generator\input data\\5. Графики на 05.18 АСУ.xlsx")
+    jobs_schedule_asu = r"c:\Users\Mihail\PycharmProjects\Work plan generator\input data\5. Графики на 05.18 АСУ.xlsx"
     # parser_asu(jobs_schedule_asu)
 
+    # TODO move this code to Tests.py
     test_raw_places = open('test raw places.txt')
     for line in test_raw_places:
         print(f'{line}  -->>  { extract_place(line)}')
