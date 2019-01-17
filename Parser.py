@@ -24,6 +24,7 @@ def xstr(cell_value):
         return str(cell_value)
 
 
+raw_data = namedtuple('raw_data', 'day work_type place')
 table_area = namedtuple('table_area', 'first_row first_col last_row last_col')
 
 
@@ -67,8 +68,10 @@ class ParserAsu:
         for i_row in range(self.data_area.first_row, self.data_area.last_row + 1):
             raw_place = self.sheet.cell(i_row, 2)
             for i_col in range(self.data_area.first_col, self.data_area.last_col + 1):
-                i_raw_data = RawData()
+                i_raw_data = raw_data
+                #TODO use local variables for place, day and work type. Assign named turple with this vars, no modify
                 i_raw_data.place = raw_place
                 i_raw_data.day = self.sheet.cell(self.data_area.first_row + 1, i_col)
                 i_raw_data.work_type = self.sheet.cell(i_row, i_col)
+                print(i_raw_data)
                 self.raw_data.append(i_raw_data)
