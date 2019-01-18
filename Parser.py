@@ -75,5 +75,5 @@ class ParserAsu:
                 if raw_work_type is not None:
                     raw_day = self.sheet.cell(self.data_area.first_row - 1, i_col).value
                     i_raw_data = raw_data(raw_day, raw_work_type, raw_place)
-                    print(i_raw_data)  # debug
+                    # print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)
