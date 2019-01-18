@@ -3,18 +3,20 @@ from collections import namedtuple
 
 # import openpyxl
 from openpyxl.worksheet import Worksheet
+
+
 # from Application import Job
 # from Pre_processing import extract_month_and_year
 
 
-class RawData:
-    def __init__(self):
-        self.day = None
-        # self.object = None
-        # self.system = None
-        self.work_type = None
-        self.place = None
-        # self.sheet_name = None
+# class RawData:
+#     def __init__(self):
+#         self.day = None
+#         # self.object = None
+#         # self.system = None
+#         self.work_type = None
+#         self.place = None
+#         # self.sheet_name = None
 
 
 def xstr(cell_value):
@@ -66,12 +68,12 @@ class ParserAsu:
 
     def extract_jobs(self):
         for i_row in range(self.data_area.first_row, self.data_area.last_row + 1):
-            raw_place = self.sheet.cell(i_row, 2)
+            raw_place = self.sheet.cell(i_row, 2).value
             for i_col in range(self.data_area.first_col, self.data_area.last_col + 1):
-                i_raw_data = raw_data
-                #TODO use local variables for place, day and work type. Assign named turple with this vars, no modify
-                i_raw_data.place = raw_place
-                i_raw_data.day = self.sheet.cell(self.data_area.first_row + 1, i_col)
-                i_raw_data.work_type = self.sheet.cell(i_row, i_col)
-                print(i_raw_data)
-                self.raw_data.append(i_raw_data)
+                # i_raw_data.place = raw_place
+                raw_work_type = self.sheet.cell(i_row, i_col).value
+                if raw_work_type is not None:
+                    raw_day = self.sheet.cell(self.data_area.first_row - 1, i_col).value
+                    i_raw_data = raw_data(raw_day, raw_work_type, raw_place)
+                    print(i_raw_data)  # debug
+                    self.raw_data.append(i_raw_data)
