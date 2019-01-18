@@ -31,8 +31,20 @@ class TestParser(unittest.TestCase):
     def test_extract_jobs(self):
         self.parser_test_107.find_data_boundaries()
         self.parser_test_107.extract_jobs()
-        self.assertEqual(self.parser_test_107.raw_data, ())
+        last = len(self.parser_test_107.raw_data) - 1
+        self.assertEqual(self.parser_test_107.raw_data[0].day, 1)
+        self.assertEqual(self.parser_test_107.raw_data[0].work_type, 'ТО1')
+        self.assertEqual(self.parser_test_107.raw_data[0].place, 'ПТК судопропускного сооружения - ПТК С1 север')
+        self.assertEqual(self.parser_test_107.raw_data[last].day, 31)
+        self.assertEqual(self.parser_test_107.raw_data[last].work_type, 'ТО4')
+        self.assertEqual(self.parser_test_107.raw_data[last].place, 'ПТК ЗУ КЗС')
 
 
 if __name__ == '__main__':
     unittest.main()
+
+    # TP = TestParser()
+    # TP.parser_test_107.find_data_boundaries()
+    # TP.parser_test_107.extract_jobs()
+    # # print(TP.parser_test_107.raw_data)
+    # print(len(TP.parser_test_107.raw_data))
