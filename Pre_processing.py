@@ -56,7 +56,9 @@ def extract_place(raw_place: str):
         return raw_place, 'unknown'
 
 
-sheet_names = {'АСУ ТП': 'АСУ ТП',
-               'АСУ И': 'АСУ И',
-               'МОСТ': 'АСУ АМ',
-               'ЛВС': 'ЛВС'}
+def filter_sheets():
+    sheet_names = {'АСУ ТП': 'АСУ ТП',
+                   'АСУ И': 'АСУ И',
+                   'МОСТ': 'АСУ АМ',
+                   'ЛВС': 'ЛВС'}
+
