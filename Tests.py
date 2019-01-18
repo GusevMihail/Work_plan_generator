@@ -1,5 +1,5 @@
 import unittest
-from pathlib import Path
+# from pathlib import Path
 import Parser
 import openpyxl
 
@@ -38,6 +38,12 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self.parser_test_107.raw_data[last].day, 31)
         self.assertEqual(self.parser_test_107.raw_data[last].work_type, 'ТО4')
         self.assertEqual(self.parser_test_107.raw_data[last].place, 'ПТК ЗУ КЗС')
+
+
+# class TestPreProcessing(unittest.TestCase):
+#     test_raw_places = open(r'.\input data\test raw places.txt')
+#     for line in test_raw_places:
+#         print(f'{line}  -->>  { extract_place(line)}')
 
 
 if __name__ == '__main__':
