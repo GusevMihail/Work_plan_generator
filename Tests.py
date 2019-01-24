@@ -16,19 +16,14 @@ class TestParser(unittest.TestCase):
     parser_test_107 = Parser.ParserAsu(sheet_test_107)
 
     def test_find_data_boundaries(self):
-        self.parser_asu_109.find_data_boundaries()
         self.assertEqual(self.parser_asu_109.data_area, (8, 6, 8, 36))
-        self.parser_asu_107.find_data_boundaries()
         self.assertEqual(self.parser_asu_107.data_area, (5, 3, 15, 33))
 
     def test_find_month_year(self):
-        self.parser_asu_107.find_month_year()
         self.assertEqual(self.parser_asu_107.month_year, 'МАЙ  2018 г.')
-        self.parser_asu_109.find_month_year()
         self.assertEqual(self.parser_asu_109.month_year, 'май 2018г.')
 
     def test_extract_jobs(self):
-        self.parser_test_107.extract_jobs()
         last = len(self.parser_test_107.raw_data) - 1
         self.assertEqual(self.parser_test_107.raw_data[0].day, 1)
         self.assertEqual(self.parser_test_107.raw_data[0].work_type, 'ТО1')

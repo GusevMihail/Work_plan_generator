@@ -38,7 +38,11 @@ class ParserAsu:
         self.month_year = None
         self.raw_data = []
 
-    def find_data_boundaries(self):
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._extract_jobs()
+
+    def _find_data_boundaries(self):
         first_row = 1
         first_col = 1
         for i_row in range(1, 30):
@@ -61,16 +65,16 @@ class ParserAsu:
                 break
         self.data_area = table_area(first_row, first_col, last_row, last_col)
 
-    def find_month_year(self):
+    def _find_month_year(self):
         if self.data_area is None:
-            self.find_data_boundaries()
+            self._find_data_boundaries()
         self.month_year = self.sheet.cell(self.data_area.first_row - 2, self.data_area.first_col).value
         if self.month_year is None:
             self.month_year = self.sheet.cell(self.data_area.first_row - 3, self.data_area.first_col).value
 
-    def extract_jobs(self):
+    def _extract_jobs(self):
         if self.data_area is None:
-            self.find_data_boundaries()
+            self._find_data_boundaries()
         for i_row in range(self.data_area.first_row, self.data_area.last_row + 1):
             raw_place = self.sheet.cell(i_row, 2).value
             for i_col in range(self.data_area.first_col, self.data_area.last_col + 1):
