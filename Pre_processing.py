@@ -56,9 +56,13 @@ def extract_place(raw_place: str):
         return raw_place, 'unknown'
 
 
-def filter_sheets():
+def extract_system(sheet_name):
     sheet_names = {'АСУ ТП': 'АСУ ТП',
                    'АСУ И': 'АСУ И',
                    'МОСТ': 'АСУ АМ',
                    'ЛВС': 'ЛВС'}
 
+    for name, system in sheet_names.items():
+        if name in sheet_name:
+            return system
+    return None
