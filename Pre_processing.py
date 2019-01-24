@@ -1,4 +1,15 @@
 import re
+import Parser
+
+
+class Job:
+    def __init__(self):
+        self.date = None
+        self.object = None
+        self.system = None
+        self.work_type = None
+        self.place = None
+        self.worker = None
 
 
 def extract_month_and_year(raw_date: str):
@@ -66,3 +77,10 @@ def extract_system(sheet_name):
         if name in sheet_name:
             return system
     return None
+
+
+def parser_to_jobs(parser: Parser.ParserAsu, jobs: []):
+    job = Job()
+
+    for raw_job in parser.raw_data:
+        print(raw_job)
