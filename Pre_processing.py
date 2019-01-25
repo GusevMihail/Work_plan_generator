@@ -1,4 +1,7 @@
+import datetime
 import re
+from typing import List
+
 import Parser
 
 
@@ -34,7 +37,7 @@ def extract_month_and_year(raw_date: str):
     return month, year
 
 
-def extract_place(raw_place: str):
+def extract_place_and_object(raw_place: str):
     places_names = {'ЗУ КЗС': ('Здание управления КЗС', 'ЗУ'),
                     'Здание управления': ('Здание управления КЗС', 'ЗУ'),
                     'АМ': ('С2 АМ', 'С2'),
@@ -79,8 +82,15 @@ def extract_system(sheet_name):
     return None
 
 
-def parser_to_jobs(parser: Parser.ParserAsu, jobs: []):
-    job = Job()
-
+def parser_to_jobs(parser: Parser.ParserAsu, jobs: List[Job]):
+    month, year = extract_month_and_year(parser.month_year)
+    system = extract_system(parser.sheet.title)
     for raw_job in parser.raw_data:
-        print(raw_job)
+        job = Job()
+        job.place, job.object = extract_place_and_object(raw_job.place)
+        job.work_type = raw_job.work_type
+        job.date = datetime.date(year, month, raw_job.day)
+        job.system = system
+        jobs.append(job)
+        # print(raw_job) # debug
+        # print(f'obj {job.object}\t pl {job.place.ljust(30)} wt {job.work_type.ljust(10)} dt {job.date}\t sys {job.system}') # debug
