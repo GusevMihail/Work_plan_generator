@@ -1,12 +1,7 @@
-# from pathlib import Path
 from collections import namedtuple
+from typing import List
 
-# import openpyxl
 from openpyxl.worksheet import Worksheet
-
-
-# from Application import Job
-# from Pre_processing import extract_month_and_year
 
 
 # class RawData:
@@ -26,17 +21,17 @@ def xstr(cell_value):
         return str(cell_value)
 
 
-raw_data = namedtuple('raw_data', 'day work_type place')
-table_area = namedtuple('table_area', 'first_row first_col last_row last_col')
+RawData = namedtuple('raw_data', 'day work_type place')
+TableArea = namedtuple('table_area', 'first_row first_col last_row last_col')
 
 
 class ParserAsu:
 
     def __init__(self, sheet: Worksheet):
         self.sheet = sheet
-        self.data_area = None
         self.month_year = None
-        self.raw_data = []
+        self.raw_data: List[RawData] = []
+        self._data_area = None
 
         self._find_data_boundaries()
         self._find_month_year()
@@ -63,24 +58,24 @@ class ParserAsu:
             if self.sheet.cell(first_row - 1, i_col).value is None:
                 last_col = i_col - 1
                 break
-        self.data_area = table_area(first_row, first_col, last_row, last_col)
+        self._data_area = TableArea(first_row, first_col, last_row, last_col)
 
     def _find_month_year(self):
-        if self.data_area is None:
+        if self._data_area is None:
             self._find_data_boundaries()
-        self.month_year = self.sheet.cell(self.data_area.first_row - 2, self.data_area.first_col).value
+        self.month_year = self.sheet.cell(self._data_area.first_row - 2, self._data_area.first_col).value
         if self.month_year is None:
-            self.month_year = self.sheet.cell(self.data_area.first_row - 3, self.data_area.first_col).value
+            self.month_year = self.sheet.cell(self._data_area.first_row - 3, self._data_area.first_col).value
 
     def _extract_jobs(self):
-        if self.data_area is None:
+        if self._data_area is None:
             self._find_data_boundaries()
-        for i_row in range(self.data_area.first_row, self.data_area.last_row + 1):
+        for i_row in range(self._data_area.first_row, self._data_area.last_row + 1):
             raw_place = self.sheet.cell(i_row, 2).value
-            for i_col in range(self.data_area.first_col, self.data_area.last_col + 1):
+            for i_col in range(self._data_area.first_col, self._data_area.last_col + 1):
                 raw_work_type = self.sheet.cell(i_row, i_col).value
                 if raw_work_type is not None:
-                    raw_day = self.sheet.cell(self.data_area.first_row - 1, i_col).value
-                    i_raw_data = raw_data(raw_day, raw_work_type, raw_place)
+                    raw_day = self.sheet.cell(self._data_area.first_row - 1, i_col).value
+                    i_raw_data = RawData(raw_day, raw_work_type, raw_place)
                     # print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)

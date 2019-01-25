@@ -19,8 +19,8 @@ class TestParser(unittest.TestCase):
     parser_test_107 = Parser.ParserAsu(sheet_test_107)
 
     def test_find_data_boundaries(self):
-        self.assertEqual(self.parser_asu_109.data_area, (8, 6, 8, 36))
-        self.assertEqual(self.parser_asu_107.data_area, (5, 3, 15, 33))
+        self.assertEqual(self.parser_asu_109._data_area, (8, 6, 8, 36))
+        self.assertEqual(self.parser_asu_107._data_area, (5, 3, 15, 33))
 
     def test_find_month_year(self):
         self.assertEqual(self.parser_asu_107.month_year, 'МАЙ  2018 г.')
