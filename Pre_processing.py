@@ -14,6 +14,9 @@ class Job:
         self.place = None
         self.worker = None
 
+    def __str__(self):
+        return f'obj:{self.object.ljust(5)} place:{self.place.ljust(30)} work:{self.work_type.ljust(10)} date:{self.date}  sys:{self.system}'
+
 
 def extract_month_and_year(raw_date: str):
     month_names = {'январь': 1,

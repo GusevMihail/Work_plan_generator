@@ -87,7 +87,7 @@ class TestTableGenerator(unittest.TestCase):
         test_out_wb = openpyxl.Workbook()
         ws = test_out_wb.active
         area = Parser.TableArea(first_row=3, last_row=6, first_col=2, last_col=4)
-        Table_generator.apply_style(ws, self.style1, table_area=area)
+        Table_generator.apply_named_style(ws, self.style1, table_area=area)
         for row in range(area.first_row, area.last_row+1):
             for col in range(area.first_col, area.last_col+1):
                 self.assertEqual(ws.cell(row, col).style, self.style1.name)

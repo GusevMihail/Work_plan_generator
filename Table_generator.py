@@ -1,10 +1,11 @@
+from datetime import date
+
 import openpyxl
 from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, PatternFill
 from openpyxl.worksheet import Worksheet
 
 from Parser import TableArea
-
-from datetime import date
+from Pre_processing import Job
 
 FIRST_COL = 1
 LAST_COL = 9
@@ -12,6 +13,8 @@ FIRST_DATA_ROW = 10
 
 thin_side = Side(style='thin', color='000000')
 thin_border = Border(left=thin_side, top=thin_side, right=thin_side, bottom=thin_side)
+basic_font = Font(name='Times New Roman', size=11)
+bold_font = Font(name='Times New Roman', size=11, b=True)
 
 current_row = FIRST_DATA_ROW
 
@@ -97,6 +100,13 @@ def write_date(ws: Worksheet, table_date: date):
     date_cell.value = table_date
 
 
+def write_obj_row(ws: Worksheet, obj_name: str):
+    ws.merge_cells(start_row=current_row, end_row=current_row, start_column=FIRST_COL, end_column=LAST_COL)
+    apply_style(ws, TableArea(first_row=current_row, last_row=current_row, first_col=FIRST_COL, last_col=LAST_COL),
+                border=thin_border, font=bold_font)
+    ws.cell(current_row, FIRST_COL).value = obj_name
+
+
 if __name__ == '__main__':
     # test_out_wb = openpyxl.Workbook()
     template_filename = r'.\input data\Template.xlsx'
@@ -104,6 +114,7 @@ if __name__ == '__main__':
     test_ws = test_out_wb.worksheets[0]
     test_date = date(2019, 1, 20)
     write_date(test_ws, test_date)
+    write_obj_row(test_ws, 'TEST')
 
     # style1 = NamedStyle(name='Style1')
     # style1.border = Border(left=thin_side, top=thin_side, right=thin_side, bottom=thin_side)
