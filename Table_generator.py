@@ -1,8 +1,19 @@
 import openpyxl
-from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment
+from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, PatternFill
 from openpyxl.worksheet import Worksheet
 
 from Parser import TableArea
+
+from datetime import date
+
+FIRST_COL = 1
+LAST_COL = 9
+FIRST_DATA_ROW = 10
+
+thin_side = Side(style='thin', color='000000')
+thin_border = Border(left=thin_side, top=thin_side, right=thin_side, bottom=thin_side)
+
+current_row = FIRST_DATA_ROW
 
 
 # ws = openpyxl.load_workbook(r'.\input data\11.12.18.xlsx')['Лист1']
@@ -50,37 +61,55 @@ def style_range(ws, cell_range, border=Border(), fill=None, font=None, alignment
                 c.fill = fill
 
 
-def apply_style(sheet: Worksheet, style: NamedStyle, table_area: TableArea):
-    for row in sheet.iter_rows(min_row=table_area.first_row, max_row=table_area.last_row,
-                               min_col=table_area.first_col, max_col=table_area.last_col):
+def apply_named_style(worksheet: Worksheet, style: NamedStyle, table_area: TableArea):
+    for row in worksheet.iter_rows(min_row=table_area.first_row, max_row=table_area.last_row,
+                                   min_col=table_area.first_col, max_col=table_area.last_col):
         for cell in row:
             cell.style = style
 
 
-# test_out_wb = openpyxl.Workbook()
-test_out_wb = openpyxl.load_workbook(r'.\input data\Template.xlsx')
-dest_filename = r'test_wb.xlsx'
-ws = test_out_wb.worksheets[0]
-c1 = ws.cell(2, 2)
-c2 = ws.cell(4, 2)
-cell_range = ws['B4':'D4']
-ws.merge_cells('B4:D4')
+def apply_style(worksheet: Worksheet, table_area: TableArea, border: Border = None, alignment: Alignment = None,
+                fill: PatternFill = None, font: Font = None):
+    for row in worksheet.iter_rows(min_row=table_area.first_row, max_row=table_area.last_row,
+                                   min_col=table_area.first_col, max_col=table_area.last_col):
+        for cell in row:
+            if border is not None:
+                cell.border = border
+            if alignment is not None:
+                cell.alignment = alignment
+            if fill is not None:
+                cell.fill = fill
+            if font is not None:
+                cell.font = font
 
-style1 = NamedStyle(name='Style1')
-bd = Side(style='thin', color='000000')
-style1.border = Border(left=bd, top=bd, right=bd, bottom=bd)
-style1.alignment = Alignment(vertical='center', horizontal='center')
-#
-test_out_wb.add_named_style(style1)
-# c1.style = style1
-# c2.style = style1
 
-c2.value = 'test text'
+def get_template(path: str):
+    wb_template = openpyxl.load_workbook(path)
+    ws_template = wb_template.active
+    header_1 = TableArea(first_row=1, last_row=7, first_col=FIRST_COL, last_col=LAST_COL)
+    header_2 = TableArea(first_row=8, last_row=9, first_col=FIRST_COL, last_col=LAST_COL)
+    apply_style(ws_template, header_2, border=thin_border)
+    return wb_template
 
-for col in range(2, 5):
-    ws.cell(4, col).style = style1
-#
-# style_range(ws, 'B4:D4', border=style1.border, alignment=style1.alignment)
-# style_range(ws, 'B4:D4', border=style1.border)
 
-test_out_wb.save(filename=dest_filename)
+def write_date(ws: Worksheet, table_date: date):
+    date_cell = ws.cell(row=6, column=1)
+    date_cell.value = table_date
+
+
+if __name__ == '__main__':
+    # test_out_wb = openpyxl.Workbook()
+    template_filename = r'.\input data\Template.xlsx'
+    test_out_wb = get_template(template_filename)
+    test_ws = test_out_wb.worksheets[0]
+    test_date = date(2019, 1, 20)
+    write_date(test_ws, test_date)
+
+    # style1 = NamedStyle(name='Style1')
+    # style1.border = Border(left=thin_side, top=thin_side, right=thin_side, bottom=thin_side)
+    # style1.alignment = Alignment(vertical='center', horizontal='center')
+    # style1.fill = PatternFill(fill_type='solid', start_color='ff8327', end_color='ff8327')
+    # test_out_wb.add_named_style(style1)
+
+    dest_filename = r'test_wb.xlsx'
+    test_out_wb.save(filename=dest_filename)
