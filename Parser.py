@@ -3,15 +3,7 @@ from typing import List
 
 from openpyxl.worksheet import Worksheet
 
-
-# class RawData:
-#     def __init__(self):
-#         self.day = None
-#         # self.object = None
-#         # self.system = None
-#         self.work_type = None
-#         self.place = None
-#         # self.sheet_name = None
+from Cell_styler import TableArea
 
 
 def xstr(cell_value):
@@ -22,7 +14,6 @@ def xstr(cell_value):
 
 
 RawData = namedtuple('raw_data', 'day work_type place')
-TableArea = namedtuple('table_area', 'first_row first_col last_row last_col')
 
 
 class ParserAsu:
