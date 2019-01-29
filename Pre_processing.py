@@ -82,13 +82,22 @@ def extract_system(sheet_name):
     return None
 
 
+def filter_work_type(work: str):
+    # work = work.strip(' ,.\t\n')
+    work = work.replace('E', 'Е')  # Eng to Rus
+    work = work.replace('T', 'Т')  # Eng to Rus
+    work = work.replace('O', 'О')  # Eng to Rus
+    work = work.replace('ТОЗ', 'ТО3')  # Letter to Num
+    return work
+
+
 def parser_to_jobs(parser: Parser.ParserAsu, jobs: List[Job]):
     month, year = extract_month_and_year(parser.month_year)
     system = extract_system(parser.sheet.title)
     for raw_job in parser.raw_data:
         job = Job()
         job.place, job.object = extract_place_and_object(raw_job.place)
-        job.work_type = raw_job.work_type
+        job.work_type = filter_work_type(raw_job.work_type)
         job.date = datetime.date(year, month, raw_job.day)
         job.system = system
         jobs.append(job)

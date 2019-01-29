@@ -71,6 +71,14 @@ class TestPreProcessing(unittest.TestCase):
         self.assertEqual(jobs[last].date, datetime.date(2018, 5, 31))
         self.assertEqual(jobs[last].system, 'АСУ ТП')
 
+    def test_filter_work_type(self):
+        self.assertEqual(Pre_processing.filter_work_type('ТО1'), 'ТО1')  # Rus to Rus
+        self.assertEqual(Pre_processing.filter_work_type('TO2'), 'ТО2')  # Eng to Rus
+        self.assertEqual(Pre_processing.filter_work_type('ETO'), 'ЕТО')  # Eng to Rus
+        self.assertEqual(Pre_processing.filter_work_type('ЕТО \nТО1'), 'ЕТО \nТО1')  # Eng+Rus to Rus
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
