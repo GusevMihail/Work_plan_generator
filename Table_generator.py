@@ -2,12 +2,14 @@ import openpyxl
 from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment
 from openpyxl.worksheet import Worksheet
 
+from Parser import TableArea
+
+
 # ws = openpyxl.load_workbook(r'.\input data\11.12.18.xlsx')['Лист1']
 # col_dim = ws.column_dimensions
 # first_col = col_dim['A']
 # col_width = first_col.width
 # print(ws.column_dimensions['A'].width)
-
 def style_range(ws, cell_range, border=Border(), fill=None, font=None, alignment=None):
     """
     Apply styles to a range of cells as if they were a single cell.
@@ -47,8 +49,16 @@ def style_range(ws, cell_range, border=Border(), fill=None, font=None, alignment
             for c in row:
                 c.fill = fill
 
-test_out_wb = openpyxl.Workbook()
-# test_out_wb = openpyxl.load_workbook(r'.\input data\Template.xlsx')
+
+def apply_style(sheet: Worksheet, style: NamedStyle, table_area: TableArea):
+    for row in sheet.iter_rows(min_row=table_area.first_row, max_row=table_area.last_row,
+                               min_col=table_area.first_col, max_col=table_area.last_col):
+        for cell in row:
+            cell.style = style
+
+
+# test_out_wb = openpyxl.Workbook()
+test_out_wb = openpyxl.load_workbook(r'.\input data\Template.xlsx')
 dest_filename = r'test_wb.xlsx'
 ws = test_out_wb.worksheets[0]
 c1 = ws.cell(2, 2)

@@ -3,9 +3,11 @@ import unittest
 from typing import List
 
 import openpyxl
+from openpyxl.styles import NamedStyle
 
 import Parser
 import Pre_processing
+import Table_generator
 
 
 class TestParser(unittest.TestCase):
@@ -78,6 +80,17 @@ class TestPreProcessing(unittest.TestCase):
         self.assertEqual(Pre_processing.filter_work_type('ЕТО \nТО1'), 'ЕТО \nТО1')  # Eng+Rus to Rus
 
 
+class TestTableGenerator(unittest.TestCase):
+    style1 = NamedStyle(name='style1')
+
+    def test_apply_style(self):
+        test_out_wb = openpyxl.Workbook()
+        ws = test_out_wb.active
+        area = Parser.TableArea(first_row=3, last_row=6, first_col=2, last_col=4)
+        Table_generator.apply_style(ws, self.style1, table_area=area)
+        for row in range(area.first_row, area.last_row+1):
+            for col in range(area.first_col, area.last_col+1):
+                self.assertEqual(ws.cell(row, col).style, self.style1.name)
 
 
 if __name__ == '__main__':
