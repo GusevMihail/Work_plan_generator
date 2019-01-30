@@ -73,7 +73,7 @@ class WorkPlan:
         worker_col = 7
         self._ws.cell(self._current_row, organization_col).value = organization
         self._ws.cell(self._current_row, system_col).value = job.system
-        self._ws.cell(self._current_row, work_col).value = job.work_type
+        self._ws.cell(self._current_row, work_col).value = job.work_type + ' ' + job.system
         self._ws.cell(self._current_row, place_col).value = job.place
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end
