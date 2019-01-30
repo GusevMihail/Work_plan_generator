@@ -81,9 +81,8 @@ class WorkPlan:
         for job in self.jobs:
             self._write_work_row(job)
 
-    def save_file(self, filename):
-        self._wb.save(filename)
-
+    def save_file(self):
+        self._wb.save(f'.\\output data\\{self.jobs[0].date}.xlsx')
 
 if __name__ == '__main__':
     # test_out_wb = openpyxl.Workbook()
