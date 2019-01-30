@@ -1,10 +1,8 @@
-from datetime import date
-import os  # debug
 from typing import List
+from itertools import groupby
 
 import openpyxl
 from openpyxl.styles import Font, Border, Side, Alignment
-from openpyxl.worksheet import Worksheet
 
 from Cell_styler import apply_style, TableArea
 from Pre_processing import Job
@@ -21,9 +19,9 @@ class WorkPlan:
         self._thin_side = Side(style='thin', color='000000')
         self._thin_border = Border(left=self._thin_side, top=self._thin_side,
                                    right=self._thin_side, bottom=self._thin_side)
-        self._basic_font = Font(name='Times New Roman', size=11)
+        self._basic_font = Font(name='Times New Roman', size=10)
         self._bold_font = Font(name='Times New Roman', size=11, b=True)
-        self._align_center = Alignment(horizontal='center', vertical='center')
+        self._align_center = Alignment(horizontal='center', vertical='center', wrap_text=True)
         self._wb = self._get_template(template_path)
         self._ws = self._wb.active
         self._write_date()
@@ -44,11 +42,16 @@ class WorkPlan:
         date_cell.value = self.jobs[0].date
 
     def _write_obj_row(self, obj_name):
+        # styling row
         self._ws.merge_cells(start_row=self._current_row, end_row=self._current_row,
                              start_column=self._first_col, end_column=self._last_col)
 
         current_row_area = TableArea(self._current_row, self._first_col, self._current_row, self._last_col)
-        apply_style(self._ws, current_row_area, border=self._thin_border, font=self._bold_font)
+        apply_style(self._ws, current_row_area,
+                    border=self._thin_border,
+                    font=self._bold_font,
+                    alignment=self._align_center)
+
         self._ws.cell(self._current_row, self._first_col).value = obj_name
         self._current_row += 1
 
@@ -76,29 +79,16 @@ class WorkPlan:
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end
         self._ws.cell(self._current_row, worker_col).value = job.worker
+        self._current_row += 1
 
     def make_plan(self):
-        for job in self.jobs:
-            self._write_work_row(job)
+        jobs_by_object = groupby(self.jobs, key=lambda job: job.object)
+        for object_name, object_jobs in jobs_by_object:
+            self._write_obj_row(object_name)
+            for job in object_jobs:
+                self._write_work_row(job)
 
     def save_file(self):
         self._wb.save(f'.\\output data\\{self.jobs[0].date}.xlsx')
 
-if __name__ == '__main__':
-    # test_out_wb = openpyxl.Workbook()
-    # template_filename = r'.\input data\Template.xlsx'
-    # test_out_wb = get_template(template_filename)
-    # test_ws = test_out_wb.worksheets[0]
-    # test_date = date(2019, 1, 20)
-    # write_date(test_ws, test_date)
-    # write_obj_row(test_ws, 'TEST')
-
-    # style1 = NamedStyle(name='Style1')
-    # style1.border = Border(left=thin_side, top=thin_side, right=thin_side, bottom=thin_side)
-    # style1.alignment = Alignment(vertical='center', horizontal='center')
-    # style1.fill = PatternFill(fill_type='solid', start_color='ff8327', end_color='ff8327')
-    # test_out_wb.add_named_style(style1)
-
-    dest_filename = r'test_wb.xlsx'
-    # test_out_wb.save(filename=dest_filename)
-    # os.startfile(dest_filename)  # debug
+# if __name__ == '__main__':
