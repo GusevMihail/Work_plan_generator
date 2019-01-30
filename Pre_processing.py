@@ -48,11 +48,6 @@ class Job:
             self.worker = random.choice(group_V)
 
 
-
-
-
-
-
 def extract_month_and_year(raw_date: str):
     month_names = {'январь': 1,
                    'февраль': 2,
