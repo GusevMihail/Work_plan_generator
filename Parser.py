@@ -39,13 +39,15 @@ class ParserAsu:
                         first_col = i_col
                         break
                 break
-        last_row = first_row
-        for i_row in range(first_row, first_row + 20):
-            if self.sheet.cell(i_row, 1).value is None:
+        max_table_row = 500
+        for i_row in range(first_row, max_table_row):
+            object_name_col = 2
+            cell = self.sheet.cell(i_row, object_name_col).value
+            if not isinstance(cell, str):
                 last_row = i_row - 1
                 break
-        last_col = first_col
-        for i_col in range(first_col, first_col + 40):
+        max_table_col = 60
+        for i_col in range(first_col, max_table_col):
             if self.sheet.cell(first_row - 1, i_col).value is None:
                 last_col = i_col - 1
                 break
