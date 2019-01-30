@@ -71,7 +71,6 @@ class WorkPlan:
         work_end_col = 6
         work_end = '18:00'
         worker_col = 7
-        job.worker = 'Подольский Андрей Вениаминович +79522726122'  # temporary code for test
         self._ws.cell(self._current_row, organization_col).value = organization
         self._ws.cell(self._current_row, system_col).value = job.system
         self._ws.cell(self._current_row, work_col).value = job.work_type
