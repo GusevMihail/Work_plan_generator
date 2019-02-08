@@ -81,7 +81,7 @@ class WorkPlan:
         self._current_row += 1
 
     def make_plan(self):
-        jobs_by_object = groupby(self.jobs, key=lambda job: job.object)
+        jobs_by_object = groupby(self.jobs, key=lambda i_job: i_job.object)
         for object_name, object_jobs in jobs_by_object:
             self._write_obj_row(object_name)
             for job in object_jobs:
