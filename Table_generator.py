@@ -62,7 +62,7 @@ class WorkPlan:
                     font=self._basic_font,
                     alignment=self._align_center)
         organization_col = 1
-        organization = 'Би. Си. Си. ООО'
+        organization = 'ООО "Би.Си.Си."'
         system_col = 2
         work_col = 3
         place_col = 4
