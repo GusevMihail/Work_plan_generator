@@ -11,7 +11,7 @@ import Pre_processing
 import Table_generator
 
 
-class TestParser(unittest.TestCase):
+class TestParserAsu(unittest.TestCase):
     wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
     wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
     sheet_asu_109 = wb_asu['109. МОСТ']
@@ -39,7 +39,46 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self.parser_test_107.raw_data[last].place, 'ПТК ЗУ КЗС')
 
 
-class TestPreProcessing(unittest.TestCase):
+class TestParserVols(unittest.TestCase):
+    wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
+    sheet_1 = wb_vols['8.1.38 ТО']
+    sheet_2 = wb_vols['10.4.38 ТО']
+    parser_1 = Parser.ParserVOLS(sheet_1)
+    parser_2 = Parser.ParserVOLS(sheet_2)
+
+    def test_find_data_boundaries(self):
+        self.assertEqual(self.parser_1._data_first_col, 7)
+        self.assertEqual(self.parser_1._data_last_col, 37)
+        self.assertEqual(self.parser_1._data_rows, [20, 21])
+        self.assertEqual(self.parser_2._data_first_col, 7)
+        self.assertEqual(self.parser_2._data_last_col, 37)
+        self.assertEqual(self.parser_2._data_rows, [22, 23, 26])
+
+    def test_find_month_year(self):
+        self.assertEqual(self.parser_1.month_year, 'Май 2018 года')
+        self.assertEqual(self.parser_2.month_year, 'Май 2018 года')
+
+    def test_extract_jobs(self):
+        self.assertEqual(self.parser_1.raw_data[0].day, 11)
+        self.assertEqual(self.parser_1.raw_data[0].work_type, 'ТО2')
+        self.assertEqual(self.parser_1.raw_data[0].place,
+                         'Местоположение: Здание управления комплекса защитных сооружений')
+        self.assertEqual(self.parser_1.raw_data[1].day, 18)
+        self.assertEqual(self.parser_1.raw_data[1].work_type, 'ТО3')
+        self.assertEqual(self.parser_1.raw_data[1].place,
+                         'Местоположение: Здание управления комплекса защитных сооружений')
+
+        self.assertEqual(self.parser_2.raw_data[0].day, 17)
+        self.assertEqual(self.parser_2.raw_data[0].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[0].place,
+                         'Местоположение: Здание трансформаторной подстанции 110/10кВ '
+                         'ПС С1 судопропускного сооружения С-1')
+        self.assertEqual(self.parser_2.raw_data[2].day, 24)
+        self.assertEqual(self.parser_2.raw_data[2].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[2].place, 'ПС №86')
+
+
+class TestPreProcessingAsu(unittest.TestCase):
     #     test_raw_places = open(r'.\input data\test raw places.txt')
     #     for line in test_raw_places:
     #         print(f'{line}  -->>  { extract_place_and_object(line)}')

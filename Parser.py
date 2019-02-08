@@ -48,10 +48,10 @@ class ParserAsu(AbstractParser):
 
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
+        self._data_area = None
         self._find_data_boundaries()
         self._find_month_year()
         self._extract_jobs()
-        self._data_area = None
 
     def _find_data_boundaries(self):
         max_table_row = 500
@@ -115,6 +115,11 @@ class ParserVOLS(AbstractParser):
         self._data_rows: List[int] = []
         self._days_row: int = None
 
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
     def _find_data_boundaries(self):
         max_table_row = 200
         max_table_col = 60
@@ -140,15 +145,15 @@ class ParserVOLS(AbstractParser):
                 self._data_last_col = col - 1
                 break
 
-        print(f'data boundaries: first col {self._data_first_col}, '
-              f'last col {self._data_last_col}, rows {self._data_rows}')  # debug
+        # print(f'data boundaries: first col {self._data_first_col}, '
+        #       f'last col {self._data_last_col}, rows {self._data_rows}')  # debug
 
     def _find_month_year(self):
         if self._days_row is None:
             self._find_data_boundaries()
 
         self.month_year = self.sheet.cell(self._days_row - 1, self._data_first_col).value
-        print(f'month_year = {self.month_year}')  # debug
+        # print(f'month_year = {self.month_year}')  # debug
 
     def _find_place_in_header(self):
         place_max_row = 30
@@ -158,7 +163,7 @@ class ParserVOLS(AbstractParser):
             cell = str(self.sheet.cell(row, place_col).value)
             if 'Местоположение' in cell:
                 self._place_in_header = cell
-                print(f'place in header {self._place_in_header}')
+                # print(f'place in header {self._place_in_header}')  # debug
                 break
 
     def _find_place(self, data_row) -> str:
@@ -183,5 +188,6 @@ class ParserVOLS(AbstractParser):
                 if cell is not None:
                     day = xint(self.sheet.cell(self._days_row, col).value)
                     i_raw_data = RawData(day, work_type, place)
-                    print(i_raw_data)  # debug
+                    if __name__ == '__main__':
+                        print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)
