@@ -124,7 +124,8 @@ def filter_work_type(work: str):
     return work
 
 
-def parser_to_jobs(parser: Parser.ParserAsu, jobs: List[Job]):
+def parser_to_jobs(parser: Parser.ParserAsu) -> List[Job]:
+    jobs: List[Job] = []
     month, year = extract_month_and_year(parser.month_year)
     system = extract_system(parser.sheet.title)
     for raw_job in parser.raw_data:
@@ -135,5 +136,6 @@ def parser_to_jobs(parser: Parser.ParserAsu, jobs: List[Job]):
         job.system = system
         job.find_worker()
         jobs.append(job)
+        return jobs
         # print(raw_job) # debug
         # print(f'obj {job.object}\t pl {job.place.ljust(30)} wt {job.work_type.ljust(10)} dt {job.date}\t sys {job.system}') # debug

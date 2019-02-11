@@ -188,6 +188,5 @@ class ParserVOLS(AbstractParser):
                 if cell is not None:
                     day = xint(self.sheet.cell(self._days_row, col).value)
                     i_raw_data = RawData(day, work_type, place)
-                    if __name__ == '__main__':
-                        print(i_raw_data)  # debug
+                    print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)
