@@ -129,23 +129,30 @@ class TestTableGenerator(unittest.TestCase):
         ws = test_out_wb.active
         area = Cell_styler.TableArea(first_row=3, last_row=6, first_col=2, last_col=4)
         Cell_styler.apply_named_style(ws, self.style1, table_area=area)
-        for row in range(area.first_row, area.last_row+1):
-            for col in range(area.first_col, area.last_col+1):
+        for row in range(area.first_row, area.last_row + 1):
+            for col in range(area.first_col, area.last_col + 1):
                 self.assertEqual(ws.cell(row, col).style, self.style1.name)
 
 
-class TestApplicationFunctions (unittest.TestCase):
-    wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+class TestApplicationFunctions(unittest.TestCase):
+    wb_test_asu = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+    wb_test_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
 
     def test_find_sheets_asu(self):
-        sheets = Application.find_sheets_asu(self.wb_test)
-        self.assertEqual(sheets[0], '107. АСУ ТП')
-        self.assertEqual(sheets[1], '108. АСУ И ')
-        self.assertEqual(sheets[2], '109. МОСТ')
-        self.assertEqual(sheets[3], '110. ЛВС ')
+        sheets = Application.find_sheets_asu(self.wb_test_asu)
+        self.assertEqual(sheets[0].title, '107. АСУ ТП')
+        self.assertEqual(sheets[1].title, '108. АСУ И ')
+        self.assertEqual(sheets[2].title, '109. МОСТ')
+        self.assertEqual(sheets[3].title, '110. ЛВС ')
         self.assertEqual(len(sheets), 4)
 
-
+    def test_find_sheets_vols(self):
+        sheets = Application.find_sheets_vols(self.wb_test_vols)
+        self.assertEqual(sheets[0].title, '8.1.38 ТО')
+        self.assertEqual(sheets[1].title, '10.2.38 ТО')
+        self.assertEqual(sheets[2].title, '10.3.38 ТО')
+        self.assertEqual(sheets[3].title, '10.4.38 ТО')
+        self.assertEqual(len(sheets), 4)
 
 
 if __name__ == '__main__':

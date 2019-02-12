@@ -17,10 +17,13 @@ def get_xlsx_files(path):
     return xlsx_files
 
 
-def find_sheets_asu(wb: openpyxl.Workbook) -> Tuple[str]:
-    sheets = tuple(sheet for sheet in wb.sheetnames if Pre_processing.extract_system(sheet) is not None)
-    return sheets
+def find_sheets_asu(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.Worksheet]:
+    return tuple(sheet for sheet in wb.worksheets
+                 if Pre_processing.extract_system(sheet.title) is not None and sheet.sheet_state == 'visible')
 
+
+def find_sheets_vols(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.Worksheet]:
+    return tuple(sheet for sheet in wb.worksheets if 'ТО' in sheet.title and sheet.sheet_state == 'visible')
 
 def parse_asu_folder():
     jobs_list: List[Pre_processing.Job] = []
@@ -37,8 +40,9 @@ def parse_asu_folder():
 
 
 if __name__ == "__main__":
-    # workbook_asu = openpyxl.load_workbook(r'.\input data\2. АСУ 02.19.xlsx')
-    # workbook_asu = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+    workbook_asu = openpyxl.load_workbook(r'.\input data\2. АСУ 02.19.xlsx')
+    workbook_test_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
+
     jobs = []
     jobs.extend(parse_asu_folder())
 
