@@ -102,7 +102,6 @@ class TestPreProcessingAsu(unittest.TestCase):
         jobs: List[Pre_processing.Job] = []
         jobs.extend(Pre_processing.parser_to_jobs(self.parser_test_107))
         last = len(jobs) - 1
-        print(jobs)
         self.assertEqual(jobs[0].object, 'Судопропускное сооружение С1')
         self.assertEqual(jobs[0].place, 'С1 Север')
         self.assertEqual(jobs[0].work_type, 'ТО1')

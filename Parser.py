@@ -101,6 +101,7 @@ class ParserAsu(AbstractParser):
                 if raw_work_type is not None:
                     raw_day = self.sheet.cell(self._data_area.first_row - 1, i_col).value
                     i_raw_data = RawData(raw_day, raw_work_type, raw_place)
+                    # print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)
 
 
@@ -188,5 +189,5 @@ class ParserVOLS(AbstractParser):
                 if cell is not None:
                     day = xint(self.sheet.cell(self._days_row, col).value)
                     i_raw_data = RawData(day, work_type, place)
-                    print(i_raw_data)  # debug
+                    # print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)

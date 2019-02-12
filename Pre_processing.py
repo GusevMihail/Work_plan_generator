@@ -16,8 +16,12 @@ class Job:
         self.worker = None
 
     def __str__(self):
-        return f'obj:{self.object.ljust(35)} place:{self.place.ljust(30)} ' \
-            f'work:{self.work_type.ljust(10)} date:{self.date}  sys:{self.system}'
+        return f'obj:{self.object.ljust(35)} place:{self.place.ljust(30)} work:{self.work_type.ljust(10)} ' \
+            f'date:{self.date}  sys:{self.system.ljust(10)} worket:{self.worker}'
+
+    def __repr__(self):
+        return f'obj:{self.object}; place:{self.place}; work:{self.work_type}; ' \
+            f'date:{self.date};  sys:{self.system}; worker:{self.worker}'
 
     def find_worker(self):
         group_S1 = ('Гусев Михаил Владимирович +79675904368',
@@ -136,6 +140,4 @@ def parser_to_jobs(parser: Parser.ParserAsu) -> List[Job]:
         job.system = system
         job.find_worker()
         jobs.append(job)
-        return jobs
-        # print(raw_job) # debug
-        # print(f'obj {job.object}\t pl {job.place.ljust(30)} wt {job.work_type.ljust(10)} dt {job.date}\t sys {job.system}') # debug
+    return jobs
