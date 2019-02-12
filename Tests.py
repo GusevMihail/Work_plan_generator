@@ -5,9 +5,10 @@ from typing import List
 import openpyxl
 from openpyxl.styles import NamedStyle
 
-import Cell_styler
+import Application
 import Parser
 import Pre_processing
+import Cell_styler
 import Table_generator
 
 
@@ -131,6 +132,20 @@ class TestTableGenerator(unittest.TestCase):
         for row in range(area.first_row, area.last_row+1):
             for col in range(area.first_col, area.last_col+1):
                 self.assertEqual(ws.cell(row, col).style, self.style1.name)
+
+
+class TestApplicationFunctions (unittest.TestCase):
+    wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+
+    def test_find_sheets_asu(self):
+        sheets = Application.find_sheets_asu(self.wb_test)
+        self.assertEqual(sheets[0], '107. АСУ ТП')
+        self.assertEqual(sheets[1], '108. АСУ И ')
+        self.assertEqual(sheets[2], '109. МОСТ')
+        self.assertEqual(sheets[3], '110. ЛВС ')
+        self.assertEqual(len(sheets), 4)
+
+
 
 
 if __name__ == '__main__':
