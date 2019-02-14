@@ -17,8 +17,11 @@ def xstr(cell_value):
 
 
 def xint(cell_value):
+
     if cell_value is None:
         return None
+    elif type(cell_value) is str:
+        return Pre_processing.find_num_in_str(cell_value)
     else:
         return int(cell_value)
 
@@ -109,7 +112,7 @@ class ParserAsu(AbstractParser):
                     self.raw_data.append(i_raw_data)
 
 
-class ParserVOLS(AbstractParser):
+class ParserVols(AbstractParser):
 
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
@@ -196,3 +199,9 @@ class ParserVOLS(AbstractParser):
                     i_raw_data = RawData(day, work_type, place)
                     # print(i_raw_data)  # debug
                     self.raw_data.append(i_raw_data)
+
+
+class ParserTk(ParserVols):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = 'Телеканал М2'

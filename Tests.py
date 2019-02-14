@@ -44,8 +44,8 @@ class TestParserVols(unittest.TestCase):
     wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
     sheet_1 = wb_vols['8.1.38 ТО']
     sheet_2 = wb_vols['10.4.38 ТО']
-    parser_1 = Parser.ParserVOLS(sheet_1)
-    parser_2 = Parser.ParserVOLS(sheet_2)
+    parser_1 = Parser.ParserVols(sheet_1)
+    parser_2 = Parser.ParserVols(sheet_2)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 7)

@@ -56,15 +56,10 @@ if __name__ == "__main__":
 
     jobs = []
     jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, Parser.ParserAsu))
-    jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, Parser.ParserVOLS))
+    jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, Parser.ParserVols))
+    jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, Parser.ParserTk))
     make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
 
-    # workbook_vols = openpyxl.load_workbook(r'.\input data\05 май ВОЛС.xlsx')
-    # sheet = workbook_vols['10.4.38 ТО']
-    # parserVOLS = Parser.ParserVOLS(sheet)
-    # parser._find_place()
-
-    # parserVOLS._find_data_boundaries()
-    # parserVOLS._find_month_year()
-    # parserVOLS._extract_jobs()
+    # for j in jobs:
+    #     print(j)

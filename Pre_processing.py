@@ -23,12 +23,12 @@ class Job:
             return str(value).ljust(length)
 
     def __str__(self):
-        return f'obj:{self._print_str(self.object,35)}'        \
-                f'place:{self._print_str(self.place, 40)}'     \
-                f'work:{self._print_str(self.work_type, 10)}'  \
-                f'date:{self._print_str(self.date, 15)}'        \
-                f'sys:{self._print_str(self.system, 10)}'       \
-                f'worker:{self._print_str(self.worker)}'
+        return f'obj:{self._print_str(self.object, 35)}' \
+            f'place:{self._print_str(self.place, 40)}' \
+            f'work:{self._print_str(self.work_type, 10)}' \
+            f'date:{self._print_str(self.date, 15)}' \
+            f'sys:{self._print_str(self.system, 15)}' \
+            f'worker:{self._print_str(self.worker)}'
 
     def __repr__(self):
         return f'obj:{self.object}; place:{self.place}; work:{self.work_type}; ' \
@@ -63,6 +63,11 @@ class Job:
             self.worker = random.choice(group_v)
 
 
+def find_num_in_str(string: str) -> int:
+    result = re.findall(r'\d+', string)
+    return int(result[0])
+
+
 def extract_month_and_year(raw_date: str):
     month_names = {'январь': 1,
                    'февраль': 2,
@@ -95,6 +100,8 @@ def extract_place_and_object(raw_place: str):
     raw_place = raw_place.replace('c', 'с')  # Eng to Rus
     raw_place = raw_place.replace('C', 'С')  # Eng to Rus
     raw_place = raw_place.replace('ВЗ', 'В3')  # Letter to Num
+    raw_place = raw_place.replace('С-', 'С')  # C-1\C-2 to C1\C2
+    raw_place = raw_place.replace('В-', 'В')  # В-№ to В№
     raw_place = raw_place.replace('север', 'Север')
     raw_place = raw_place.replace('юг', 'Юг')
     raw_place = raw_place.replace('(', '')
