@@ -6,6 +6,8 @@ from openpyxl.worksheet import Worksheet
 
 from Cell_styler import TableArea
 
+import Pre_processing
+
 
 def xstr(cell_value):
     if cell_value is None:
@@ -30,6 +32,7 @@ class AbstractParser(metaclass=ABCMeta):
         self.sheet = sheet
         self.month_year = None
         self.raw_data: List[RawData] = []
+        self.system = None
 
     @abstractmethod
     def _find_data_boundaries(self):
@@ -49,6 +52,7 @@ class ParserAsu(AbstractParser):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self._data_area = None
+        self.system = Pre_processing.find_system_by_sheet(sheet.title)
         self._find_data_boundaries()
         self._find_month_year()
         self._extract_jobs()
@@ -109,6 +113,7 @@ class ParserVOLS(AbstractParser):
 
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
+        self.system = 'ВОЛС'
         self._place_in_header: str = None
         self._work_type_col = 4
         self._data_first_col = 7

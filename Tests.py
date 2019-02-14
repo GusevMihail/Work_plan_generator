@@ -93,11 +93,11 @@ class TestPreProcessingAsu(unittest.TestCase):
     parser_test_107 = Parser.ParserAsu(sheet_test_107)
 
     def test_extract_system(self):
-        self.assertEqual(Pre_processing.extract_system('107. АСУ ТП'), 'АСУ ТП')
-        self.assertEqual(Pre_processing.extract_system('108. АСУ И '), 'АСУ И')
-        self.assertEqual(Pre_processing.extract_system('109. МОСТ'), 'АСУ АМ')
-        self.assertEqual(Pre_processing.extract_system('Лист 1'), None)
-        self.assertEqual(Pre_processing.extract_system(''), None)
+        self.assertEqual(Pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
+        self.assertEqual(Pre_processing.find_system_by_sheet('108. АСУ И '), 'АСУ И')
+        self.assertEqual(Pre_processing.find_system_by_sheet('109. МОСТ'), 'АСУ АМ')
+        self.assertEqual(Pre_processing.find_system_by_sheet('Лист 1'), None)
+        self.assertEqual(Pre_processing.find_system_by_sheet(''), None)
 
     def test_parser_to_jobs(self):
         jobs: List[Pre_processing.Job] = []

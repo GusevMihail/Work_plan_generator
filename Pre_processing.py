@@ -15,41 +15,52 @@ class Job:
         self.place = None
         self.worker = None
 
+    @staticmethod
+    def _print_str(value, length=0):
+        if value is None:
+            return '<None>'.ljust(length)
+        else:
+            return str(value).ljust(length)
+
     def __str__(self):
-        return f'obj:{self.object.ljust(35)} place:{self.place.ljust(30)} work:{self.work_type.ljust(10)} ' \
-            f'date:{self.date}  sys:{self.system.ljust(10)} worket:{self.worker}'
+        return f'obj:{self._print_str(self.object,35)}'        \
+                f'place:{self._print_str(self.place, 40)}'     \
+                f'work:{self._print_str(self.work_type, 10)}'  \
+                f'date:{self._print_str(self.date, 15)}'        \
+                f'sys:{self._print_str(self.system, 10)}'       \
+                f'worker:{self._print_str(self.worker)}'
 
     def __repr__(self):
         return f'obj:{self.object}; place:{self.place}; work:{self.work_type}; ' \
             f'date:{self.date};  sys:{self.system}; worker:{self.worker}'
 
     def find_worker(self):
-        group_S1 = ('Гусев Михаил Владимирович +79675904368',
+        group_s1 = ('Гусев Михаил Владимирович +79675904368',
                     'Харитонов Виктор Яковлевич +79319642368',
                     'Мулин Николай Николаевич +79112283889',
                     'Кушмылев Евгений Павлович +79819134737')
 
-        group_S2 = ('Каприца Анатолий Евгеньевич +79046315018',
+        group_s2 = ('Каприца Анатолий Евгеньевич +79046315018',
                     # 'Макаров Виктор Викторович +79312089129',
                     'Горнов Александр Серафимович +79111314015')
 
-        group_V = ('Подольский Андрей Вениаминович +79312531066',
+        group_v = ('Подольский Андрей Вениаминович +79312531066',
                    'Кокоев Михаил Николаевич +79216441993',
                    'Санжара Владимир Александрович +79819629285')
 
-        group_VOLS = ('Ильин Андрей Владимирович +79219303652',
+        group_vols = ('Ильин Андрей Владимирович +79219303652',
                       'Ястребов Алексей Владимирович +79313581975',
                       'Огородников Алексей Юрьевич +79313196196')
 
         random.seed(self.date)
         if self.system in ('ЛВС', 'ВОЛС', 'Телеканал М2'):
-            self.worker = random.choice(group_VOLS)
+            self.worker = random.choice(group_vols)
         elif 'С1' in self.object:
-            self.worker = random.choice(group_S1)
+            self.worker = random.choice(group_s1)
         elif 'С2' in self.object:
-            self.worker = random.choice(group_S2)
+            self.worker = random.choice(group_s2)
         else:
-            self.worker = random.choice(group_V)
+            self.worker = random.choice(group_v)
 
 
 def extract_month_and_year(raw_date: str):
@@ -98,16 +109,36 @@ def extract_place_and_object(raw_place: str):
     if search_obj:
         return 'В' + search_obj.group(1), 'Водопропускное сооружение ' + 'В' + search_obj.group(1)
 
+    # find PS 86
+    if 'ПС' in raw_place and '86' in raw_place:
+        return 'ПС 86', 'Судопропускное сооружение С1'
+
+    # find PS 360
+    if 'ПС' in raw_place and '360' in raw_place:
+        return 'ПС 360', 'Горская'
+
+    # find PS 223
+    if 'ПС' in raw_place and '223' in raw_place:
+        return 'ПС 223', 'Бронка'
+
+    # find PS S1 110/10
+    if 'ПС' in raw_place and 'С1' in raw_place and '110' in raw_place:
+        return 'С1 ПС 110/10кВ', 'Судопропускное сооружение С1'
+
+    # find PS S2 110/10
+    if 'ПС' in raw_place and 'С2' in raw_place and '110' in raw_place:
+        return 'С2 ПС 110/10кВ', 'Судопропускное сооружение С2'
+
     # find С1, С2 objects
     search_obj = re.search(r'(С\d)(.*)', raw_place)
     if search_obj:
         return ''.join(search_obj.groups()), 'Судопропускное сооружение ' + search_obj.group(1)
-    else:
-        print('нет совпадений с шаблоном')  # debug
-        return raw_place, 'unknown'
+
+    print(f'extract_place_and_object: {raw_place} - нет совпадений с шаблоном')  # debug
+    return raw_place, 'unknown'
 
 
-def extract_system(sheet_name):
+def find_system_by_sheet(sheet_name):
     sheet_names = {'АСУ ТП': 'АСУ ТП',
                    'АСУ И': 'АСУ И',
                    'МОСТ': 'АСУ АМ',
@@ -128,16 +159,16 @@ def filter_work_type(work: str):
     return work
 
 
-def parser_to_jobs(parser: Parser.ParserAsu) -> List[Job]:
+def parser_to_jobs(parser) -> List[Job]:
     jobs: List[Job] = []
     month, year = extract_month_and_year(parser.month_year)
-    system = extract_system(parser.sheet.title)
+    # system = find_system_by_sheet(parser.sheet.title)
     for raw_job in parser.raw_data:
         job = Job()
         job.place, job.object = extract_place_and_object(raw_job.place)
         job.work_type = filter_work_type(raw_job.work_type)
         job.date = datetime.date(year, month, raw_job.day)
-        job.system = system
+        job.system = parser.system
         job.find_worker()
         jobs.append(job)
     return jobs
