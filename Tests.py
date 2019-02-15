@@ -11,6 +11,23 @@ import Parser
 import Pre_processing
 
 
+class TestParser(unittest.TestCase):
+
+    def test_xstr(self):
+        func = Parser.xstr
+        self.assertEqual(func('test str'), 'test str')
+        self.assertEqual(func('   test str \n'), 'test str')
+        self.assertEqual(func('123'), '123')
+        self.assertEqual(func(123), '123')
+        self.assertEqual(func(None), None)
+        self.assertEqual(func(''), None)
+        self.assertEqual(func('   '), None)
+        self.assertEqual(func('\t'), None)
+        self.assertEqual(func('\n   \t'), None)
+        # self.assertEqual(func(''), '')
+        # self.assertEqual(func(''), '')
+        # self.assertEqual(func(''), '')
+
 class TestParserAsu(unittest.TestCase):
     wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
     wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
@@ -126,7 +143,55 @@ class TestParserAskue(unittest.TestCase):
         self.assertEqual(self.parser_2.raw_data[2].place, 'С1')
 
 
-class TestPreProcessingAsu(unittest.TestCase):
+class TestParserTechReg(unittest.TestCase):
+    wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
+    sheet_1 = wb_tech_reg['10.2.37 ТО']
+    sheet_2 = wb_tech_reg['10.3.37 ТО']
+    parser_1 = Parser.ParserTechReg(sheet_1)
+    parser_2 = Parser.ParserTechReg(sheet_2)
+
+    # for j in parser_2.raw_data:
+    #     print(j)
+
+    def test_find_data_boundaries(self):
+        self.assertEqual(self.parser_1._data_first_col, 9)
+        self.assertEqual(self.parser_1._data_last_col, 36)
+        self.assertEqual(self.parser_1._data_rows, [x for x in range(10, 32)])
+        self.assertEqual(self.parser_1._days_row, 7)
+        self.assertEqual(self.parser_2._data_first_col, 9)
+        self.assertEqual(self.parser_2._data_last_col, 39)
+        self.assertEqual(self.parser_2._data_rows, [x for x in range(10, 44)])
+        self.assertEqual(self.parser_2._days_row, 7)
+
+    def test_find_month_year(self):
+        self.assertEqual(self.parser_1.month_year, 'Февраль 2019 год')
+        self.assertEqual(self.parser_2.month_year, 'Июль 2019 год')
+
+    def test_extract_jobs(self):
+        last_1 = len(self.parser_1.raw_data) - 1
+        self.assertEqual(len(self.parser_1.raw_data), 2)
+        self.assertEqual(self.parser_1.raw_data[0].day, 7)
+        self.assertEqual(self.parser_1.raw_data[0].work_type, 'ТО2')
+        self.assertEqual(self.parser_1.raw_data[0].place,
+                         'Местоположение: Здание общеподстанционного управления 110 кВ ПС №360')
+        self.assertEqual(self.parser_1.raw_data[last_1].day, 6)
+        self.assertEqual(self.parser_1.raw_data[last_1].work_type, 'ТО2')
+        self.assertEqual(self.parser_1.raw_data[last_1].place,
+                         'Местоположение: Здание общеподстанционного управления 110 кВ ПС №360')
+
+        self.assertEqual(len(self.parser_2.raw_data), 3)
+        self.assertEqual(self.parser_2.raw_data[0].day, 9)
+        self.assertEqual(self.parser_2.raw_data[0].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[0].place, 'Местоположение: Трансформаторная подстанция ПС С2 110/10 кВ')
+        self.assertEqual(self.parser_2.raw_data[1].day, 10)
+        self.assertEqual(self.parser_2.raw_data[1].work_type, 'ЕТО')
+        self.assertEqual(self.parser_2.raw_data[1].place, 'Местоположение: Трансформаторная подстанция ПС С2 110/10 кВ')
+        self.assertEqual(self.parser_2.raw_data[2].day, 10)
+        self.assertEqual(self.parser_2.raw_data[2].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[2].place, 'Местоположение: Трансформаторная подстанция ПС С2 110/10 кВ')
+
+
+class TestPreProcessing(unittest.TestCase):
     #     test_raw_places = open(r'.\input data\test raw places.txt')
     #     for line in test_raw_places:
     #         print(f'{line}  -->>  { extract_place_and_object(line)}')
@@ -166,6 +231,40 @@ class TestPreProcessingAsu(unittest.TestCase):
         self.assertEqual(Pre_processing.filter_work_type('TO2'), 'ТО2')  # Eng to Rus
         self.assertEqual(Pre_processing.filter_work_type('ETO'), 'ЕТО')  # Eng to Rus
         self.assertEqual(Pre_processing.filter_work_type('ЕТО \nТО1'), 'ЕТО \nТО1')  # Eng+Rus to Rus
+
+    def test_extract_place_and_object(self):
+        func = Pre_processing.extract_place_and_object
+        self.assertEqual(func('Местоположение: Здание общеподстанционного управления 110 кВ ПС №360'),
+                         ('ПС 360', 'Горская'))
+        self.assertEqual(func('Судопропускное сооружение С1 Север ТП2'),
+                         ('С1 Север ТП2', 'Судопропускное сооружение С1'))
+        self.assertEqual(func('Судопропускное сооружение С1 Север ПС 110/10 кВ'),
+                         ('С1 ПС 110/10кВ', 'Судопропускное сооружение С1'))
+        self.assertEqual(func('Здание управления'),
+                         ('Здание управления КЗС', 'Здание управления КЗС'))
+        self.assertEqual(func('ПТК ЗУ КЗС'),
+                         ('Здание управления КЗС', 'Здание управления КЗС'))
+        self.assertEqual(func('Оборудование АСУ АМ'),
+                         ('С2 АМ', 'Судопропускное сооружение С2'))
+        self.assertEqual(func('Водопропускное сооружение В-6'),
+                         ('В6', 'Водопропускное сооружение В6'))
+        self.assertEqual(func('ПТК судопропускного сооружения - ПТК C1 север'),  # eng 'C'
+                         ('С1 Север', 'Судопропускное сооружение С1'))
+        self.assertEqual(func('ПТК водопропускного сооружения ВЗ - ПТК ВЗ.'),
+                         ('В3', 'Водопропускное сооружение В3'))
+        self.assertEqual(func('2. Котлин'),
+                         ('Котлин', 'Котлин'))
+        self.assertEqual(func('1. Бронка'),
+                         ('ПС 223', 'Бронка'))
+        self.assertEqual(func('Местоподожение:  Здание трансформаторной подстанции '
+                              '110/10 кВ ПС С1 судопропускного сооружения С-1'),
+                         ('С1 ПС 110/10кВ', 'Судопропускное сооружение С1'))
+        self.assertEqual(func('Местоподожение: Трансформаторная подстанция ПС С2 110/10 кВ'),
+                         ('С2 ПС 110/10кВ', 'Судопропускное сооружение С2'))
+        self.assertEqual(func('Местоподожение:Здание общеподстанционного управления 110 кВ  ПС №360'),
+                         ('ПС 360', 'Горская'))
+        # self.assertEqual(func(''),
+        #                  ('', ''))
 
 
 class TestTableGenerator(unittest.TestCase):

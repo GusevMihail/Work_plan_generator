@@ -58,8 +58,10 @@ if __name__ == "__main__":
     jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, Parser.ParserVols))
     jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, Parser.ParserTk))
     jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, Parser.ParserAskue))
+    jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, Parser.ParserTechReg))
     make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
+    print(f'Всего найдено работ: {len(jobs)}')
 
     # for j in jobs:
     #     print(j)

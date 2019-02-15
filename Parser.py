@@ -196,11 +196,13 @@ class ParserVolsLikeSys(AbstractParser):
             work_type = self.sheet.cell(row, self._work_type_col).value
             place = self._find_place(row)
             for col in range(self._data_first_col, self._data_last_col + 1):
-                cell = self.sheet.cell(row, col).value
+                cell = xstr(self.sheet.cell(row, col).value)
                 if cell is not None:
                     day = xint(self.sheet.cell(self._days_row, col).value)
                     i_raw_data = RawData(day, work_type, place)
                     # print(i_raw_data)  # debug
+                    if day == 122:
+                        print(f'! row{row}: {i_raw_data}')
                     if i_raw_data not in self.raw_data:
                         self.raw_data.append(i_raw_data)
 
@@ -247,6 +249,23 @@ class ParserAskue(ParserVolsLikeSys):
         self._place_in_header: str = None
         self._work_type_col = 4
         self._data_first_col = 6  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: int = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+
+class ParserTechReg(ParserVolsLikeSys):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = 'Тех. учет'  # unique value
+        self._place_in_header: str = None
+        self._work_type_col = 6  # unique value
+        self._data_first_col = 9  # unique value
         self._data_last_col = None
         self._data_rows: List[int] = []
         self._days_row: int = None
