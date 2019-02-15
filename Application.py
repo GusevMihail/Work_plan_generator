@@ -1,14 +1,13 @@
-from os import listdir
 from itertools import groupby
+from os import listdir
 from typing import List, Tuple
+
 import openpyxl
 
 import Parser
 import Pre_processing
 import Table_generator
 
-
-# TODO перенести обработку отдельных типов файлов в отдельные функции. Брать файлы из прописанных папок (АСУ, ВОЛС).
 
 def get_xlsx_files(path):
     files = listdir(path)
@@ -58,6 +57,7 @@ if __name__ == "__main__":
     jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, Parser.ParserAsu))
     jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, Parser.ParserVols))
     jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, Parser.ParserTk))
+    jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, Parser.ParserAskue))
     make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
 

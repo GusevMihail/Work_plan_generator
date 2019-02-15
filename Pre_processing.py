@@ -1,9 +1,7 @@
 import datetime
+import random
 import re
 from typing import List
-import random
-
-import Parser
 
 
 class Job:
@@ -53,7 +51,7 @@ class Job:
                       'Огородников Алексей Юрьевич +79313196196')
 
         random.seed(self.date)
-        if self.system in ('ЛВС', 'ВОЛС', 'Телеканал М2'):
+        if self.system in ('ЛВС', 'ВОЛС', 'Телеканал М2', 'АИИСКУЭ'):
             self.worker = random.choice(group_vols)
         elif 'С1' in self.object:
             self.worker = random.choice(group_s1)
@@ -127,7 +125,6 @@ def extract_place_and_object(raw_place: str):
     search_obj = re.search(r'В\W{,3}(\d)', raw_place)
     if search_obj:
         return 'В' + search_obj.group(1), 'Водопропускное сооружение ' + 'В' + search_obj.group(1)
-
 
     # find С1, С2 objects
     search_obj = re.search(r'(С\d)(.*)', raw_place)

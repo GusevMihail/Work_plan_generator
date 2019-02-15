@@ -42,7 +42,6 @@ class WorkPlan:
         date_cell.value = self.jobs[0].date
 
     def _write_obj_row(self, obj_name):
-        # styling row
         self._ws.merge_cells(start_row=self._current_row, end_row=self._current_row,
                              start_column=self._first_col, end_column=self._last_col)
 

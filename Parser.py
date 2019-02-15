@@ -2,11 +2,11 @@ from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 from typing import List
 
+from openpyxl.utils import get_column_letter
 from openpyxl.worksheet import Worksheet
 
-from Cell_styler import TableArea
-
 import Pre_processing
+from Cell_styler import TableArea
 
 
 def xstr(cell_value):
@@ -17,7 +17,6 @@ def xstr(cell_value):
 
 
 def xint(cell_value):
-
     if cell_value is None:
         return None
     elif type(cell_value) is str:
@@ -108,11 +107,11 @@ class ParserAsu(AbstractParser):
                 if raw_work_type is not None:
                     raw_day = self.sheet.cell(self._data_area.first_row - 1, i_col).value
                     i_raw_data = RawData(raw_day, raw_work_type, raw_place)
-                    # print(i_raw_data)  # debug
-                    self.raw_data.append(i_raw_data)
+                    if i_raw_data not in self.raw_data:
+                        self.raw_data.append(i_raw_data)
 
 
-class ParserVols(AbstractParser):
+class ParserVolsLikeSys(AbstractParser):
 
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
@@ -124,11 +123,6 @@ class ParserVols(AbstractParser):
         self._data_rows: List[int] = []
         self._days_row: int = None
 
-        self._find_data_boundaries()
-        self._find_month_year()
-        self._find_place_in_header()
-        self._extract_jobs()
-
     def _find_data_boundaries(self):
         max_table_row = 200
         max_table_col = 60
@@ -136,7 +130,6 @@ class ParserVols(AbstractParser):
         for row in range(1, max_table_row):
             cell = str(self.sheet.cell(row, self._work_type_col).value)
             if ('ТО' in cell) and not ('вид' in cell.lower()):
-                # print(f'[D{row}] {cell}')  # debug
                 self._data_rows.append(row)
         self._data_rows.sort()
 
@@ -148,9 +141,10 @@ class ParserVols(AbstractParser):
                 break
 
         for col in range(self._data_first_col, max_table_col):
-            cell = xint(self.sheet.cell(self._days_row, col).value)
-            # print(f'[{col},{row}]={cell} ({type(cell)})')  # debug
-            if type(cell) is not int:
+            cell_value = xint(self.sheet.cell(self._days_row, col).value)
+            column_hidden = self.sheet.column_dimensions[get_column_letter(col)].hidden
+            # print(f'[{col},{self._days_row}]={cell} ({type(cell)})')  # debug
+            if type(cell_value) is not int or column_hidden:
                 self._data_last_col = col - 1
                 break
 
@@ -170,7 +164,7 @@ class ParserVols(AbstractParser):
 
         for row in range(1, place_max_row):
             cell = str(self.sheet.cell(row, place_col).value)
-            if 'Местоположение' in cell:
+            if 'Место' in cell:
                 self._place_in_header = cell
                 # print(f'place in header {self._place_in_header}')  # debug
                 break
@@ -178,16 +172,21 @@ class ParserVols(AbstractParser):
     def _find_place(self, data_row) -> str:
         if self._place_in_header is None:
             self._find_place_in_header()
+
         for row in range(data_row, self._days_row, -1):
             cell = str(self.sheet.cell(row, self._data_first_col).value)
-            if 'ПС' in cell and '86' in cell:
-                return 'ПС №86'
+            place, object_name = Pre_processing.extract_place_and_object(cell)
+            if object_name != 'unknown':
+                # print(f'{cell.ljust(40)} -> place {place}, obj {object_name}')
+                return place
         else:
             return self._place_in_header
 
     def _extract_jobs(self):
         if self._data_last_col is None:
             self._find_data_boundaries()
+
+        raw_data = []
 
         for row in self._data_rows:
             work_type = self.sheet.cell(row, self._work_type_col).value
@@ -198,10 +197,57 @@ class ParserVols(AbstractParser):
                     day = xint(self.sheet.cell(self._days_row, col).value)
                     i_raw_data = RawData(day, work_type, place)
                     # print(i_raw_data)  # debug
-                    self.raw_data.append(i_raw_data)
+                    if i_raw_data not in self.raw_data:
+                        self.raw_data.append(i_raw_data)
 
 
-class ParserTk(ParserVols):
+class ParserVols(ParserVolsLikeSys):
+
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
-        self.system = 'Телеканал М2'
+        self.system = 'ВОЛС'  # unique value
+        self._place_in_header: str = None
+        self._work_type_col = 4
+        self._data_first_col = 7  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: int = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+
+class ParserTk(ParserVolsLikeSys):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = 'Телеканал М2'  # unique value
+        self._place_in_header: str = None
+        self._work_type_col = 4
+        self._data_first_col = 7  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: int = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+
+class ParserAskue(ParserVolsLikeSys):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = 'АИИСКУЭ'  # unique value
+        self._place_in_header: str = None
+        self._work_type_col = 4
+        self._data_first_col = 6  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: int = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()

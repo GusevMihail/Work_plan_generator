@@ -6,10 +6,9 @@ import openpyxl
 from openpyxl.styles import NamedStyle
 
 import Application
+import Cell_styler
 import Parser
 import Pre_processing
-import Cell_styler
-import Table_generator
 
 
 class TestParserAsu(unittest.TestCase):
@@ -71,12 +70,60 @@ class TestParserVols(unittest.TestCase):
 
         self.assertEqual(self.parser_2.raw_data[0].day, 17)
         self.assertEqual(self.parser_2.raw_data[0].work_type, 'ТО2')
-        self.assertEqual(self.parser_2.raw_data[0].place,
-                         'Местоположение: Здание трансформаторной подстанции 110/10кВ '
-                         'ПС С1 судопропускного сооружения С-1')
+        self.assertEqual(self.parser_2.raw_data[0].place, 'С1 ПС 110/10кВ')
         self.assertEqual(self.parser_2.raw_data[2].day, 24)
         self.assertEqual(self.parser_2.raw_data[2].work_type, 'ТО2')
-        self.assertEqual(self.parser_2.raw_data[2].place, 'ПС №86')
+        self.assertEqual(self.parser_2.raw_data[2].place, 'ПС 86')
+
+
+class TestParserAskue(unittest.TestCase):
+    wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
+    sheet_1 = wb_askue['февраль 8.1.36 ТО']
+    sheet_2 = wb_askue['Февраль 10.4.36 ТО']
+    parser_1 = Parser.ParserAskue(sheet_1)
+    parser_2 = Parser.ParserAskue(sheet_2)
+
+    # for j in parser_2.raw_data:
+    #     print(j)
+
+    def test_find_data_boundaries(self):
+        self.assertEqual(self.parser_1._data_first_col, 6)
+        self.assertEqual(self.parser_1._data_last_col, 33)
+        self.assertEqual(self.parser_1._data_rows, [21, 22, 23])
+        self.assertEqual(self.parser_1._days_row, 17)
+        self.assertEqual(self.parser_2._data_first_col, 6)
+        self.assertEqual(self.parser_2._data_last_col, 33)
+        self.assertEqual(self.parser_2._data_rows, [22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39])
+        self.assertEqual(self.parser_2._days_row, 17)
+
+    def test_find_month_year(self):
+        self.assertEqual(self.parser_1.month_year, 'Февраль 2019 года')
+        self.assertEqual(self.parser_2.month_year, 'Февраль 2019 года')
+
+    def test_extract_jobs(self):
+        last_1 = len(self.parser_1.raw_data) - 1
+        self.assertEqual(len(self.parser_1.raw_data), 22)
+        self.assertEqual(self.parser_1.raw_data[0].day, 8)
+        self.assertEqual(self.parser_1.raw_data[0].work_type, 'ТО2')
+        self.assertEqual(self.parser_1.raw_data[0].place,
+                         'Местоподожение: Здание управления комплекса защитных сооружений')
+        # "Местопо_д_ожение" не является опечаткой в тесте. Данная опечатка имеет место во входных данных
+        self.assertEqual(self.parser_1.raw_data[last_1].day, 14)
+        self.assertEqual(self.parser_1.raw_data[last_1].work_type, 'ТО2')
+        self.assertEqual(self.parser_1.raw_data[last_1].place,
+                         'Местоподожение: Здание управления комплекса защитных сооружений')
+
+        last_2 = len(self.parser_2.raw_data) - 1
+        self.assertEqual(len(self.parser_2.raw_data), 3)
+        self.assertEqual(self.parser_2.raw_data[0].day, 13)
+        self.assertEqual(self.parser_2.raw_data[0].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[0].place, 'ПС 223')
+        self.assertEqual(self.parser_2.raw_data[1].day, 20)
+        self.assertEqual(self.parser_2.raw_data[1].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[1].place, 'Котлин')
+        self.assertEqual(self.parser_2.raw_data[2].day, 27)
+        self.assertEqual(self.parser_2.raw_data[2].work_type, 'ТО2')
+        self.assertEqual(self.parser_2.raw_data[2].place, 'С1')
 
 
 class TestPreProcessingAsu(unittest.TestCase):
