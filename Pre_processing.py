@@ -91,9 +91,16 @@ def extract_month_and_year(raw_date: str):
 
 
 def extract_place_and_object(raw_place: str):
-    places_names = {'ЗУ КЗС': ('Здание управления КЗС', 'Здание управления КЗС'),
-                    'Здание управления': ('Здание управления КЗС', 'Здание управления КЗС'),
-                    'АМ': ('С2 АМ', 'Судопропускное сооружение С2'),
+    places_names = {('ЗУ КЗС',): ('Здание управления КЗС', 'Здание управления КЗС'),
+                    ('Здание управления',): ('Здание управления КЗС', 'Здание управления КЗС'),
+                    ('АМ',): ('С2 АМ', 'Судопропускное сооружение С2'),
+                    ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', 'Судопропускное сооружение С1'),
+                    ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', 'Судопропускное сооружение С2'),
+                    ('Бронка',): ('ПС 223', 'Бронка'),
+                    ('ПС', '223'): ('ПС 223', 'Бронка'),
+                    ('ПС', '360'): ('ПС 360', 'Горская'),
+                    ('ПС', '86'): ('ПС 86', 'Судопропускное сооружение С1'),
+                    ('Котлин',): ('Котлин', 'Котлин'),
                     }
 
     raw_place = raw_place.strip(' ,.\t\n')
@@ -108,7 +115,12 @@ def extract_place_and_object(raw_place: str):
     raw_place = raw_place.replace(')', '')
 
     for i_template, i_place in places_names.items():
-        if i_template in raw_place:
+        for keyword in i_template:
+            if keyword in raw_place:
+                continue
+            else:
+                break
+        else:
             return i_place
 
     # find В1..В6 objects
@@ -116,32 +128,13 @@ def extract_place_and_object(raw_place: str):
     if search_obj:
         return 'В' + search_obj.group(1), 'Водопропускное сооружение ' + 'В' + search_obj.group(1)
 
-    # find PS 86
-    if 'ПС' in raw_place and '86' in raw_place:
-        return 'ПС 86', 'Судопропускное сооружение С1'
-
-    # find PS 360
-    if 'ПС' in raw_place and '360' in raw_place:
-        return 'ПС 360', 'Горская'
-
-    # find PS 223
-    if 'ПС' in raw_place and '223' in raw_place:
-        return 'ПС 223', 'Бронка'
-
-    # find PS S1 110/10
-    if 'ПС' in raw_place and 'С1' in raw_place and '110' in raw_place:
-        return 'С1 ПС 110/10кВ', 'Судопропускное сооружение С1'
-
-    # find PS S2 110/10
-    if 'ПС' in raw_place and 'С2' in raw_place and '110' in raw_place:
-        return 'С2 ПС 110/10кВ', 'Судопропускное сооружение С2'
 
     # find С1, С2 objects
     search_obj = re.search(r'(С\d)(.*)', raw_place)
     if search_obj:
         return ''.join(search_obj.groups()), 'Судопропускное сооружение ' + search_obj.group(1)
 
-    print(f'extract_place_and_object: {raw_place} - нет совпадений с шаблоном')  # debug
+    # print(f'extract_place_and_object: {raw_place} - нет совпадений с шаблоном')  # debug
     return raw_place, 'unknown'
 
 
