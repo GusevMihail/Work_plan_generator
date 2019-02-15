@@ -13,7 +13,11 @@ def xstr(cell_value):
     if cell_value is None:
         return None
     else:
-        return str(cell_value)
+        filtered_str = str(cell_value).strip(' \t\n')
+        if filtered_str == '':
+            return None
+        else:
+            return filtered_str
 
 
 def xint(cell_value):
