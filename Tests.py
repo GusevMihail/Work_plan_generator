@@ -9,6 +9,7 @@ import Application
 import Cell_styler
 import Parser
 import Pre_processing
+import Duty_schedule
 
 
 class TestParser(unittest.TestCase):
@@ -302,6 +303,16 @@ class TestApplicationFunctions(unittest.TestCase):
         self.assertEqual(sheets[2].title, '10.3.38 ТО')
         self.assertEqual(sheets[3].title, '10.4.38 ТО')
         self.assertEqual(len(sheets), 4)
+
+
+@unittest.skip('skipped')
+class TestDutySchedule(unittest.TestCase):
+    def setUp(self):
+        self.workbook = openpyxl.load_workbook(r'.\input data\Test график дежурств 19.02.xlsx')
+        self.schedule = Duty_schedule.DutySchedule(self.workbook.worksheets[0])
+
+    def test_parsing(self):
+        self.assertEqual(self.schedule._data_last_col, 30)
 
 
 if __name__ == '__main__':
