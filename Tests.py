@@ -25,19 +25,19 @@ class TestParser(unittest.TestCase):
         self.assertEqual(func('   '), None)
         self.assertEqual(func('\t'), None)
         self.assertEqual(func('\n   \t'), None)
-        # self.assertEqual(func(''), '')
-        # self.assertEqual(func(''), '')
-        # self.assertEqual(func(''), '')
+
 
 class TestParserAsu(unittest.TestCase):
-    wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
-    wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
-    sheet_asu_109 = wb_asu['109. МОСТ']
-    sheet_asu_107 = wb_asu['107. АСУ ТП']
-    sheet_test_107 = wb_test['107. АСУ ТП']
-    parser_asu_109 = Parser.ParserAsu(sheet_asu_109)
-    parser_asu_107 = Parser.ParserAsu(sheet_asu_107)
-    parser_test_107 = Parser.ParserAsu(sheet_test_107)
+    @classmethod
+    def setUpClass(cls):
+        cls.wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
+        cls.wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+        cls.sheet_asu_109 = cls.wb_asu['109. МОСТ']
+        cls.sheet_asu_107 = cls.wb_asu['107. АСУ ТП']
+        cls.sheet_test_107 = cls.wb_test['107. АСУ ТП']
+        cls.parser_asu_109 = Parser.ParserAsu(cls.sheet_asu_109)
+        cls.parser_asu_107 = Parser.ParserAsu(cls.sheet_asu_107)
+        cls.parser_test_107 = Parser.ParserAsu(cls.sheet_test_107)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_asu_109._data_area, (8, 6, 8, 36))
@@ -58,11 +58,13 @@ class TestParserAsu(unittest.TestCase):
 
 
 class TestParserVols(unittest.TestCase):
-    wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
-    sheet_1 = wb_vols['8.1.38 ТО']
-    sheet_2 = wb_vols['10.4.38 ТО']
-    parser_1 = Parser.ParserVols(sheet_1)
-    parser_2 = Parser.ParserVols(sheet_2)
+    @classmethod
+    def setUpClass(cls):
+        cls.wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
+        cls.sheet_1 = cls.wb_vols['8.1.38 ТО']
+        cls.sheet_2 = cls.wb_vols['10.4.38 ТО']
+        cls.parser_1 = Parser.ParserVols(cls.sheet_1)
+        cls.parser_2 = Parser.ParserVols(cls.sheet_2)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 7)
@@ -95,11 +97,13 @@ class TestParserVols(unittest.TestCase):
 
 
 class TestParserAskue(unittest.TestCase):
-    wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
-    sheet_1 = wb_askue['февраль 8.1.36 ТО']
-    sheet_2 = wb_askue['Февраль 10.4.36 ТО']
-    parser_1 = Parser.ParserAskue(sheet_1)
-    parser_2 = Parser.ParserAskue(sheet_2)
+    @classmethod
+    def setUpClass(cls):
+        cls.wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
+        cls.sheet_1 = cls.wb_askue['февраль 8.1.36 ТО']
+        cls.sheet_2 = cls.wb_askue['Февраль 10.4.36 ТО']
+        cls.parser_1 = Parser.ParserAskue(cls.sheet_1)
+        cls.parser_2 = Parser.ParserAskue(cls.sheet_2)
 
     # for j in parser_2.raw_data:
     #     print(j)
@@ -145,11 +149,13 @@ class TestParserAskue(unittest.TestCase):
 
 
 class TestParserTechReg(unittest.TestCase):
-    wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
-    sheet_1 = wb_tech_reg['10.2.37 ТО']
-    sheet_2 = wb_tech_reg['10.3.37 ТО']
-    parser_1 = Parser.ParserTechReg(sheet_1)
-    parser_2 = Parser.ParserTechReg(sheet_2)
+    @classmethod
+    def setUpClass(cls):
+        cls.wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
+        cls.sheet_1 = cls.wb_tech_reg['10.2.37 ТО']
+        cls.sheet_2 = cls.wb_tech_reg['10.3.37 ТО']
+        cls.parser_1 = Parser.ParserTechReg(cls.sheet_1)
+        cls.parser_2 = Parser.ParserTechReg(cls.sheet_2)
 
     # for j in parser_2.raw_data:
     #     print(j)
@@ -193,17 +199,19 @@ class TestParserTechReg(unittest.TestCase):
 
 
 class TestPreProcessing(unittest.TestCase):
-    #     test_raw_places = open(r'.\input data\test raw places.txt')
-    #     for line in test_raw_places:
-    #         print(f'{line}  -->>  { extract_place_and_object(line)}')
-    wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
-    wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
-    sheet_asu_109 = wb_asu['109. МОСТ']
-    sheet_asu_107 = wb_asu['107. АСУ ТП']
-    sheet_test_107 = wb_test['107. АСУ ТП']
-    parser_asu_109 = Parser.ParserAsu(sheet_asu_109)
-    parser_asu_107 = Parser.ParserAsu(sheet_asu_107)
-    parser_test_107 = Parser.ParserAsu(sheet_test_107)
+    @classmethod
+    def setUpClass(cls):
+        #     test_raw_places = open(r'.\input data\test raw places.txt')
+        #     for line in test_raw_places:
+        #         print(f'{line}  -->>  { extract_place_and_object(line)}')
+        cls.wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
+        cls.wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+        cls.sheet_asu_109 = cls.wb_asu['109. МОСТ']
+        cls.sheet_asu_107 = cls.wb_asu['107. АСУ ТП']
+        cls.sheet_test_107 = cls.wb_test['107. АСУ ТП']
+        cls.parser_asu_109 = Parser.ParserAsu(cls.sheet_asu_109)
+        cls.parser_asu_107 = Parser.ParserAsu(cls.sheet_asu_107)
+        cls.parser_test_107 = Parser.ParserAsu(cls.sheet_test_107)
 
     def test_extract_system(self):
         self.assertEqual(Pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
@@ -269,7 +277,9 @@ class TestPreProcessing(unittest.TestCase):
 
 
 class TestTableGenerator(unittest.TestCase):
-    style1 = NamedStyle(name='style1')
+    @classmethod
+    def setUpClass(cls):
+        cls.style1 = NamedStyle(name='style1')
 
     def test_apply_style(self):
         test_out_wb = openpyxl.Workbook()
@@ -282,8 +292,10 @@ class TestTableGenerator(unittest.TestCase):
 
 
 class TestApplicationFunctions(unittest.TestCase):
-    wb_test_asu = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
-    wb_test_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
+    @classmethod
+    def setUpClass(cls):
+        cls.wb_test_asu = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+        cls.wb_test_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
 
     def test_find_sheets_asu(self):
         sheets = Application.find_sheets_asu(self.wb_test_asu)
