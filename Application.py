@@ -44,15 +44,12 @@ def make_xlsx_from_jobs(jobs_list):
     for job in jobs_by_days:
         template_filename = r'.\input data\Template.xlsx'
         day_job = list(job[1])
-        test_table = Table_generator.WorkPlan(day_job, template_filename)
-        test_table.make_plan()
-        test_table.save_file()
+        table = Table_generator.WorkPlan(day_job, template_filename)
+        table.make_plan()
+        table.save_file()
 
 
 if __name__ == "__main__":
-    # workbook_asu = openpyxl.load_workbook(r'.\input data\2. АСУ 02.19.xlsx')
-    # workbook_test_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
-
     jobs = []
     jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, Parser.ParserAsu))
     jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, Parser.ParserVols))
