@@ -25,18 +25,19 @@ class TestParser(unittest.TestCase):
         self.assertEqual(func('   '), None)
         self.assertEqual(func('\t'), None)
         self.assertEqual(func('\n   \t'), None)
-
+        # self.assertEqual(func(''), '')
+        # self.assertEqual(func(''), '')
+        # self.assertEqual(func(''), '')
 
 class TestParserAsu(unittest.TestCase):
-    def setUp(self):
-        self.wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
-        self.wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
-        self.sheet_asu_109 = self.wb_asu['109. МОСТ']
-        self.sheet_asu_107 = self.wb_asu['107. АСУ ТП']
-        self.sheet_test_107 = self.wb_test['107. АСУ ТП']
-        self.parser_asu_109 = Parser.ParserAsu(self.sheet_asu_109)
-        self.parser_asu_107 = Parser.ParserAsu(self.sheet_asu_107)
-        self.parser_test_107 = Parser.ParserAsu(self.sheet_test_107)
+    wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
+    wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+    sheet_asu_109 = wb_asu['109. МОСТ']
+    sheet_asu_107 = wb_asu['107. АСУ ТП']
+    sheet_test_107 = wb_test['107. АСУ ТП']
+    parser_asu_109 = Parser.ParserAsu(sheet_asu_109)
+    parser_asu_107 = Parser.ParserAsu(sheet_asu_107)
+    parser_test_107 = Parser.ParserAsu(sheet_test_107)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_asu_109._data_area, (8, 6, 8, 36))
@@ -57,12 +58,11 @@ class TestParserAsu(unittest.TestCase):
 
 
 class TestParserVols(unittest.TestCase):
-    def setUp(self):
-        self.wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
-        self.sheet_1 = self.wb_vols['8.1.38 ТО']
-        self.sheet_2 = self.wb_vols['10.4.38 ТО']
-        self.parser_1 = Parser.ParserVols(self.sheet_1)
-        self.parser_2 = Parser.ParserVols(self.sheet_2)
+    wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
+    sheet_1 = wb_vols['8.1.38 ТО']
+    sheet_2 = wb_vols['10.4.38 ТО']
+    parser_1 = Parser.ParserVols(sheet_1)
+    parser_2 = Parser.ParserVols(sheet_2)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 7)
@@ -95,15 +95,14 @@ class TestParserVols(unittest.TestCase):
 
 
 class TestParserAskue(unittest.TestCase):
-    def setUp(self):
-        self.wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
-        self.sheet_1 = self.wb_askue['февраль 8.1.36 ТО']
-        self.sheet_2 = self.wb_askue['Февраль 10.4.36 ТО']
-        self.parser_1 = Parser.ParserAskue(self.sheet_1)
-        self.parser_2 = Parser.ParserAskue(self.sheet_2)
+    wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
+    sheet_1 = wb_askue['февраль 8.1.36 ТО']
+    sheet_2 = wb_askue['Февраль 10.4.36 ТО']
+    parser_1 = Parser.ParserAskue(sheet_1)
+    parser_2 = Parser.ParserAskue(sheet_2)
 
-        # for j in parser_2.raw_data:
-        #     print(j)
+    # for j in parser_2.raw_data:
+    #     print(j)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 6)
@@ -146,12 +145,14 @@ class TestParserAskue(unittest.TestCase):
 
 
 class TestParserTechReg(unittest.TestCase):
-    def setUp(self):
-        self.wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
-        self.sheet_1 = self.wb_tech_reg['10.2.37 ТО']
-        self.sheet_2 = self.wb_tech_reg['10.3.37 ТО']
-        self.parser_1 = Parser.ParserTechReg(self.sheet_1)
-        self.parser_2 = Parser.ParserTechReg(self.sheet_2)
+    wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
+    sheet_1 = wb_tech_reg['10.2.37 ТО']
+    sheet_2 = wb_tech_reg['10.3.37 ТО']
+    parser_1 = Parser.ParserTechReg(sheet_1)
+    parser_2 = Parser.ParserTechReg(sheet_2)
+
+    # for j in parser_2.raw_data:
+    #     print(j)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 9)
@@ -192,20 +193,17 @@ class TestParserTechReg(unittest.TestCase):
 
 
 class TestPreProcessing(unittest.TestCase):
-    def setUp(self):
-        #     test_raw_places = open(r'.\input data\test raw places.txt')
-        #     for line in test_raw_places:
-        #         print(f'{line}  -->>  { extract_place_and_object(line)}')
-        self.wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
-        self.wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
-        self.sheet_asu_109 = self.wb_asu['109. МОСТ']
-        self.sheet_asu_107 = self.wb_asu['107. АСУ ТП']
-        self.sheet_test_107 = self.wb_test['107. АСУ ТП']
-        self.parser_asu_109 = Parser.ParserAsu(self.sheet_asu_109)
-        self.parser_asu_107 = Parser.ParserAsu(self.sheet_asu_107)
-        self.parser_test_107 = Parser.ParserAsu(self.sheet_test_107)
-
-    # def test_
+    #     test_raw_places = open(r'.\input data\test raw places.txt')
+    #     for line in test_raw_places:
+    #         print(f'{line}  -->>  { extract_place_and_object(line)}')
+    wb_asu = openpyxl.load_workbook(r'.\input data\5. Графики на 05.18 АСУ.xlsx')
+    wb_test = openpyxl.load_workbook(r'.\input data\Test Schedule.xlsx')
+    sheet_asu_109 = wb_asu['109. МОСТ']
+    sheet_asu_107 = wb_asu['107. АСУ ТП']
+    sheet_test_107 = wb_test['107. АСУ ТП']
+    parser_asu_109 = Parser.ParserAsu(sheet_asu_109)
+    parser_asu_107 = Parser.ParserAsu(sheet_asu_107)
+    parser_test_107 = Parser.ParserAsu(sheet_test_107)
 
     def test_extract_system(self):
         self.assertEqual(Pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
@@ -271,8 +269,7 @@ class TestPreProcessing(unittest.TestCase):
 
 
 class TestTableGenerator(unittest.TestCase):
-    def setUp(self):
-        self.style1 = NamedStyle(name='style1')
+    style1 = NamedStyle(name='style1')
 
     def test_apply_style(self):
         test_out_wb = openpyxl.Workbook()
