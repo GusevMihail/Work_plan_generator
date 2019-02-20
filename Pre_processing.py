@@ -63,7 +63,10 @@ class Job:
 
 def find_num_in_str(string: str) -> int:
     result = re.findall(r'\d+', string)
-    return int(result[0])
+    if len(result) > 0:
+        return int(result[0])
+    else:
+        return None
 
 
 def extract_month_and_year(raw_date: str):

@@ -26,7 +26,7 @@ def xint(cell_value):
     elif type(cell_value) is str:
         return Pre_processing.find_num_in_str(cell_value)
     else:
-        return int(cell_value)
+        return cell_value
 
 
 RawData = namedtuple('raw_data', 'day work_type place')

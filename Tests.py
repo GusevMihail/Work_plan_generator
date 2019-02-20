@@ -26,6 +26,19 @@ class TestParser(unittest.TestCase):
         self.assertEqual(func('\t'), None)
         self.assertEqual(func('\n   \t'), None)
 
+    def test_xint(self):
+        func = Parser.xint
+        self.assertEqual(func('1'), 1)
+        self.assertEqual(func('  85  \n'), 85)
+        self.assertEqual(func('str str 43 str'), 43)
+        self.assertEqual(func('72, 234'), 72)
+        self.assertEqual(func('float 1,32'), 1)
+        self.assertEqual(func(''), None)
+        self.assertEqual(func('   '), None)
+        self.assertEqual(func('str str'), None)
+        self.assertEqual(func(None), None)
+        self.assertEqual(func([1, 2]), [1, 2])
+
 
 class TestParserAsu(unittest.TestCase):
     @classmethod
@@ -212,6 +225,19 @@ class TestPreProcessing(unittest.TestCase):
         cls.parser_asu_109 = Parser.ParserAsu(cls.sheet_asu_109)
         cls.parser_asu_107 = Parser.ParserAsu(cls.sheet_asu_107)
         cls.parser_test_107 = Parser.ParserAsu(cls.sheet_test_107)
+
+    def test_find_num_in_str(self):
+        func = Pre_processing.find_num_in_str
+        self.assertEqual(func('1'), 1)
+        self.assertEqual(func('  85  \n'), 85)
+        self.assertEqual(func('str str 43 str'), 43)
+        self.assertEqual(func('72, 234'), 72)
+        self.assertEqual(func('float 1,32'), 1)
+        self.assertEqual(func(''), None)
+        self.assertEqual(func('   '), None)
+        self.assertEqual(func('str str'), None)
+        # self.assertEqual(func(''), )
+        # self.assertEqual(func(''), )
 
     def test_extract_system(self):
         self.assertEqual(Pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
