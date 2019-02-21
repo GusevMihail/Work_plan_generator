@@ -51,11 +51,13 @@ class Job:
                       'Огородников Алексей Юрьевич +79313196196')
 
         random.seed(self.date)
-        if self.system in ('ЛВС', 'ВОЛС', 'Телеканал М2', 'АИИСКУЭ'):
+        if self.system in ('ЛВС', 'ВОЛС', 'Телеканал М2', 'АИИСКУЭ', 'Тех. учет'):
             self.worker = random.choice(group_vols)
         elif 'С1' in self.object:
             self.worker = random.choice(group_s1)
         elif 'С2' in self.object:
+            self.worker = random.choice(group_s2)
+        elif 'Здание управления' in self.object:
             self.worker = random.choice(group_s2)
         else:
             self.worker = random.choice(group_v)
