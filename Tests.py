@@ -340,14 +340,27 @@ class TestApplicationFunctions(unittest.TestCase):
         self.assertEqual(len(sheets), 4)
 
 
-@unittest.skip('skipped')
 class TestDutySchedule(unittest.TestCase):
-    def setUp(self):
-        self.workbook = openpyxl.load_workbook(r'.\input data\Test график дежурств 19.02.xlsx')
-        self.schedule = Duty_schedule.DutySchedule(self.workbook.worksheets[0])
+    @classmethod
+    def setUpClass(cls):
+        cls.workbook = openpyxl.load_workbook(r'.\input data\Test график дежурств 19.02.xlsx')
+        cls.schedule = Duty_schedule.DutySchedule(cls.workbook.worksheets[0])
 
     def test_parsing(self):
         self.assertEqual(self.schedule._data_last_col, 30)
+
+        self.assertEqual(self.schedule._day2col(1), 3)
+        self.assertEqual(self.schedule._day2col(15), 17)
+        self.assertEqual(self.schedule._day2col(28), 30)
+        self.assertEqual(self.schedule._day2col(29), None)
+
+        self.assertEqual(self.schedule._is_workday(1), True)
+        self.assertEqual(self.schedule._is_workday(2), False)
+        self.assertEqual(self.schedule._is_workday(3), False)
+        self.assertEqual(self.schedule._is_workday(22), True)
+        self.assertEqual(self.schedule._is_workday(28), True)
+        self.assertEqual(self.schedule._is_workday(29), None)
+
 
 
 if __name__ == '__main__':

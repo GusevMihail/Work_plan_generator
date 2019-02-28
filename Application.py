@@ -28,8 +28,8 @@ def find_sheets_vols(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.
 def process_files(folder: str, find_sheets_function, parser_class):
     jobs_list: List[Pre_processing.Job] = []
     for file in get_xlsx_files(folder):
-        print(f'parse asu file: {file}')
         file_path = folder + '\\' + str(file)
+        print(f'parse file: {file_path}')
         workbook = openpyxl.load_workbook(file_path)
         sheets = find_sheets_function(workbook)
         for sheet in sheets:
