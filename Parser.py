@@ -133,14 +133,15 @@ class ParserVolsLikeSys(AbstractParser):
 
         for row in range(1, max_table_row):
             cell = str(self.sheet.cell(row, self._work_type_col).value)
-            if ('ТО' in cell) and not ('вид' in cell.lower()):
+            row_visible = not self.sheet.row_dimensions[row].hidden
+            if ('ТО' in cell) and not ('вид' in cell.lower()) and row_visible:
                 self._data_rows.append(row)
         self._data_rows.sort()
 
         for row in range(1, max_table_row):
             # print(row)  # debug
-            cell = str(self.sheet.cell(row, self._data_first_col).value)
-            if cell == '1':
+            cell = xstr(self.sheet.cell(row, self._data_first_col).value)
+            if cell == '1' or cell == '2':      # TODO temp code. refactor this method
                 self._days_row = row
                 break
 

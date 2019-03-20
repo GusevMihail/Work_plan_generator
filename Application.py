@@ -12,7 +12,6 @@ import Table_generator
 def get_xlsx_files(path):
     files = listdir(path)
     xlsx_files = filter(lambda x: '.xlsx' in x and '$' not in x, files)
-    print('run')
     return xlsx_files
 
 
@@ -27,8 +26,9 @@ def find_sheets_vols(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.
 
 def process_files(folder: str, find_sheets_function, parser_class):
     jobs_list: List[Pre_processing.Job] = []
+    print(f'folder: {folder}')
     for file in get_xlsx_files(folder):
-        print(f'parse asu file: {file}')
+        print(f' - parsing file: {file}')
         file_path = folder + '\\' + str(file)
         workbook = openpyxl.load_workbook(file_path)
         sheets = find_sheets_function(workbook)
@@ -39,6 +39,7 @@ def process_files(folder: str, find_sheets_function, parser_class):
 
 
 def make_xlsx_from_jobs(jobs_list):
+    print('Генерация планов работ \n ...')
     jobs_list.sort(key=lambda x: (x.date, x.object, x.system, x.work_type))
     jobs_by_days = groupby(jobs, key=lambda x: x.date)
     for job in jobs_by_days:
@@ -56,9 +57,10 @@ if __name__ == "__main__":
     jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, Parser.ParserTk))
     jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, Parser.ParserAskue))
     jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, Parser.ParserTechReg))
+    print(f'Всего найдено работ: {len(jobs)}')
     make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
-    print(f'Всего найдено работ: {len(jobs)}')
+    # input()
 
     # for j in jobs:
     #     print(j)
