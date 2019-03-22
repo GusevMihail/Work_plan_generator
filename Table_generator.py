@@ -6,6 +6,7 @@ from openpyxl.styles import Font, Border, Side, Alignment
 
 from Cell_styler import apply_style, TableArea
 from Pre_processing import Job
+from detailed_works import work_details
 
 
 class WorkPlan:
@@ -22,6 +23,7 @@ class WorkPlan:
         self._basic_font = Font(name='Times New Roman', size=10)
         self._bold_font = Font(name='Times New Roman', size=11, b=True)
         self._align_center = Alignment(horizontal='center', vertical='center', wrap_text=True)
+        self._align_left = Alignment(horizontal='left', vertical='center', wrap_text=True)
         self._wb = self._get_template(template_path)
         self._ws = self._wb.active
         self._write_date()
@@ -64,6 +66,11 @@ class WorkPlan:
         organization = 'ООО "Би.Си.Си."'
         system_col = 2
         work_col = 3
+        self._ws.cell(self._current_row, work_col).alignment = self._align_left
+        if work_details(job) is not None:
+            work = job.work_type + '\n' + work_details(job)
+        else:
+            work = job.work_type
         place_col = 4
         work_start_col = 5
         work_start = '9:00'
@@ -72,7 +79,7 @@ class WorkPlan:
         worker_col = 7
         self._ws.cell(self._current_row, organization_col).value = organization
         self._ws.cell(self._current_row, system_col).value = job.system
-        self._ws.cell(self._current_row, work_col).value = job.work_type  # + ' ' + job.system
+        self._ws.cell(self._current_row, work_col).value = work
         self._ws.cell(self._current_row, place_col).value = job.place
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end

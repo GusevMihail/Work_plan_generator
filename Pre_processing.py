@@ -153,7 +153,7 @@ def find_system_by_sheet(sheet_name):
 
 
 def filter_work_type(work: str):
-    # work = work.strip(' ,.\t\n')
+    work = work.strip(' ,.\t\n')
     work = work.replace('E', 'Е')  # Eng to Rus
     work = work.replace('T', 'Т')  # Eng to Rus
     work = work.replace('O', 'О')  # Eng to Rus
