@@ -131,6 +131,7 @@ class ParserVolsLikeSys(AbstractParser):
         max_table_row = 200
         max_table_col = 60
 
+        # find data rows
         for row in range(1, max_table_row):
             cell = str(self.sheet.cell(row, self._work_type_col).value)
             row_visible = not self.sheet.row_dimensions[row].hidden
@@ -138,10 +139,22 @@ class ParserVolsLikeSys(AbstractParser):
                 self._data_rows.append(row)
         self._data_rows.sort()
 
+        # find days row and first data col
         for row in range(1, max_table_row):
-            # print(row)  # debug
+            row_visible = not self.sheet.row_dimensions[row].hidden
+            if row_visible:
+                for col in range(self._work_type_col, 60):
+                    column_visible = not self.sheet.column_dimensions[get_column_letter(col)].hidden
+                    cell = xstr(self.sheet.cell(row, col).value)
+                    next_cell = xstr(self.sheet.cell(row, col + 1).value)
+                    if column_visible and cell=='1' and next_cell == '2':
+                        row = self._days_row
+                        col = self._data_first_col
+                        break
+
+        for row in range(1, max_table_row):
             cell = xstr(self.sheet.cell(row, self._data_first_col).value)
-            if cell == '1' or cell == '2':      # TODO temp code. refactor this method
+            if cell == '1' or cell == '2':  # TODO temp code. refactor this method
                 self._days_row = row
                 break
 
