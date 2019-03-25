@@ -110,9 +110,11 @@ class ParserAsu(AbstractParser):
                 raw_work_type = self.sheet.cell(i_row, i_col).value
                 if raw_work_type is not None:
                     raw_day = self.sheet.cell(self._data_area.first_row - 1, i_col).value
-                    i_raw_data = RawData(raw_day, raw_work_type, raw_place)
-                    if i_raw_data not in self.raw_data:
-                        self.raw_data.append(i_raw_data)
+                    one_line_work_type = xstr(raw_work_type).replace('\n',' ')
+                    for splitted_work_type in one_line_work_type.split(' '):
+                        i_raw_data = RawData(raw_day, splitted_work_type, raw_place)
+                        if i_raw_data not in self.raw_data:
+                            self.raw_data.append(i_raw_data)
 
 
 class ParserVolsLikeSys(AbstractParser):
