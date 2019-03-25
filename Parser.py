@@ -140,6 +140,7 @@ class ParserVolsLikeSys(AbstractParser):
         self._data_rows.sort()
 
         # find days row and first data col
+        exit_flag = False
         for row in range(1, max_table_row):
             row_visible = not self.sheet.row_dimensions[row].hidden
             if row_visible:
@@ -148,15 +149,18 @@ class ParserVolsLikeSys(AbstractParser):
                     cell = xstr(self.sheet.cell(row, col).value)
                     next_cell = xstr(self.sheet.cell(row, col + 1).value)
                     if column_visible and cell=='1' and next_cell == '2':
-                        row = self._days_row
-                        col = self._data_first_col
+                        self._days_row = row
+                        self._data_first_col = col
+                        exit_flag = True
                         break
-
-        for row in range(1, max_table_row):
-            cell = xstr(self.sheet.cell(row, self._data_first_col).value)
-            if cell == '1' or cell == '2':  # TODO temp code. refactor this method
-                self._days_row = row
+            if exit_flag:
                 break
+
+        # for row in range(1, max_table_row):
+        #     cell = xstr(self.sheet.cell(row, self._data_first_col).value)
+        #     if cell == '1' or cell == '2':  # TODO temp code. refactor this method
+        #         self._days_row = row
+        #         break
 
         for col in range(self._data_first_col, max_table_col):
             cell_value = xint(self.sheet.cell(self._days_row, col).value)
