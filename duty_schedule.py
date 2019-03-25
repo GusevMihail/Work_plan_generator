@@ -1,6 +1,6 @@
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet import Worksheet
-from Parser import xint
+from parser import xint
 
 
 class DutySchedule:

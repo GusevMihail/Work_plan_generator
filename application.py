@@ -4,9 +4,9 @@ from typing import List, Tuple
 
 import openpyxl
 
-import Parser
-import Pre_processing
-import Table_generator
+import parser
+import pre_processing
+import table_generator
 
 
 def get_xlsx_files(path):
@@ -17,7 +17,7 @@ def get_xlsx_files(path):
 
 def find_sheets_asu(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.Worksheet]:
     return tuple(sheet for sheet in wb.worksheets
-                 if Pre_processing.find_system_by_sheet(sheet.title) is not None and sheet.sheet_state == 'visible')
+                 if pre_processing.find_system_by_sheet(sheet.title) is not None and sheet.sheet_state == 'visible')
 
 
 def find_sheets_vols(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.Worksheet]:
@@ -25,7 +25,7 @@ def find_sheets_vols(wb: openpyxl.Workbook) -> Tuple[openpyxl.workbook.workbook.
 
 
 def process_files(folder: str, find_sheets_function, parser_class):
-    jobs_list: List[Pre_processing.Job] = []
+    jobs_list: List[pre_processing.Job] = []
     print(f'folder: {folder}')
     for file in get_xlsx_files(folder):
         print(f' - parsing file: {file}')
@@ -34,7 +34,7 @@ def process_files(folder: str, find_sheets_function, parser_class):
         sheets = find_sheets_function(workbook)
         for sheet in sheets:
             parser = parser_class(sheet)
-            jobs_list.extend(Pre_processing.parser_to_jobs(parser))
+            jobs_list.extend(pre_processing.parser_to_jobs(parser))
     return jobs_list
 
 
@@ -45,18 +45,18 @@ def make_xlsx_from_jobs(jobs_list):
     for job in jobs_by_days:
         template_filename = r'.\input data\Template.xlsx'
         day_job = list(job[1])
-        table = Table_generator.WorkPlan(day_job, template_filename)
+        table = table_generator.WorkPlan(day_job, template_filename)
         table.make_plan()
         table.save_file()
 
 
 if __name__ == "__main__":
     jobs = []
-    jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, Parser.ParserAsu))
-    jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, Parser.ParserVols))
-    jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, Parser.ParserTk))
-    jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, Parser.ParserAskue))
-    jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, Parser.ParserTechReg))
+    jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, parser.ParserAsu))
+    jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, parser.ParserVols))
+    jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, parser.ParserTk))
+    jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, parser.ParserAskue))
+    jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, parser.ParserTechReg))
     print(f'Всего найдено работ: {len(jobs)}')
     make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')

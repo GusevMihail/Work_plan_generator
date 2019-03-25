@@ -4,8 +4,8 @@ from itertools import groupby
 import openpyxl
 from openpyxl.styles import Font, Border, Side, Alignment
 
-from Cell_styler import apply_style, TableArea
-from Pre_processing import Job
+from cell_styler import apply_style, TableArea
+from pre_processing import Job
 from detailed_works import work_details
 
 

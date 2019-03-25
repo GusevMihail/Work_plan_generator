@@ -1,6 +1,6 @@
 import openpyxl
 from openpyxl.workbook.workbook import Workbook, Worksheet
-from Pre_processing import Job
+from pre_processing import Job
 
 
 def work_details(job: Job) -> str:
