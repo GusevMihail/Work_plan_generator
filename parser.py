@@ -5,8 +5,8 @@ from typing import List
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet import Worksheet
 
-import Pre_processing
-from Cell_styler import TableArea
+import pre_processing
+from cell_styler import TableArea
 
 
 def xstr(cell_value):
@@ -24,7 +24,7 @@ def xint(cell_value):
     if cell_value is None:
         return None
     elif type(cell_value) is str:
-        return Pre_processing.find_num_in_str(cell_value)
+        return pre_processing.find_num_in_str(cell_value)
     else:
         return cell_value
 
@@ -58,7 +58,7 @@ class ParserAsu(AbstractParser):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self._data_area = None
-        self.system = Pre_processing.find_system_by_sheet(sheet.title)
+        self.system = pre_processing.find_system_by_sheet(sheet.title)
         self._find_data_boundaries()
         self._find_month_year()
         self._extract_jobs()
@@ -199,7 +199,7 @@ class ParserVolsLikeSys(AbstractParser):
 
         for row in range(data_row, self._days_row, -1):
             cell = str(self.sheet.cell(row, self._data_first_col).value)
-            place, object_name = Pre_processing.extract_place_and_object(cell)
+            place, object_name = pre_processing.extract_place_and_object(cell)
             if object_name != 'unknown':
                 # print(f'{cell.ljust(40)} -> place {place}, obj {object_name}')
                 return place

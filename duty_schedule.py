@@ -1,6 +1,6 @@
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet import Worksheet
-from Parser import xint
+from parser import xint
 from collections import namedtuple
 
 worker = namedtuple('worker', 'full_name phone_number')

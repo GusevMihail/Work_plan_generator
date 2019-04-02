@@ -5,17 +5,17 @@ from typing import List
 import openpyxl
 from openpyxl.styles import NamedStyle
 
-import Application
-import Cell_styler
-import Parser
-import Pre_processing
-import Duty_schedule
+import application
+import cell_styler
+import parser
+import pre_processing
+import duty_schedule
 
 
 class TestParser(unittest.TestCase):
 
     def test_xstr(self):
-        func = Parser.xstr
+        func = parser.xstr
         self.assertEqual(func('test str'), 'test str')
         self.assertEqual(func('   test str \n'), 'test str')
         self.assertEqual(func('123'), '123')
@@ -27,7 +27,7 @@ class TestParser(unittest.TestCase):
         self.assertEqual(func('\n   \t'), None)
 
     def test_xint(self):
-        func = Parser.xint
+        func = parser.xint
         self.assertEqual(func('1'), 1)
         self.assertEqual(func('  85  \n'), 85)
         self.assertEqual(func('str str 43 str'), 43)
@@ -48,9 +48,9 @@ class TestParserAsu(unittest.TestCase):
         cls.sheet_asu_109 = cls.wb_asu['109. МОСТ']
         cls.sheet_asu_107 = cls.wb_asu['107. АСУ ТП']
         cls.sheet_test_107 = cls.wb_test['107. АСУ ТП']
-        cls.parser_asu_109 = Parser.ParserAsu(cls.sheet_asu_109)
-        cls.parser_asu_107 = Parser.ParserAsu(cls.sheet_asu_107)
-        cls.parser_test_107 = Parser.ParserAsu(cls.sheet_test_107)
+        cls.parser_asu_109 = parser.ParserAsu(cls.sheet_asu_109)
+        cls.parser_asu_107 = parser.ParserAsu(cls.sheet_asu_107)
+        cls.parser_test_107 = parser.ParserAsu(cls.sheet_test_107)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_asu_109._data_area, (8, 6, 8, 36))
@@ -76,8 +76,8 @@ class TestParserVols(unittest.TestCase):
         cls.wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
         cls.sheet_1 = cls.wb_vols['8.1.38 ТО']
         cls.sheet_2 = cls.wb_vols['10.4.38 ТО']
-        cls.parser_1 = Parser.ParserVols(cls.sheet_1)
-        cls.parser_2 = Parser.ParserVols(cls.sheet_2)
+        cls.parser_1 = parser.ParserVols(cls.sheet_1)
+        cls.parser_2 = parser.ParserVols(cls.sheet_2)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 7)
@@ -115,8 +115,8 @@ class TestParserAskue(unittest.TestCase):
         cls.wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
         cls.sheet_1 = cls.wb_askue['февраль 8.1.36 ТО']
         cls.sheet_2 = cls.wb_askue['Февраль 10.4.36 ТО']
-        cls.parser_1 = Parser.ParserAskue(cls.sheet_1)
-        cls.parser_2 = Parser.ParserAskue(cls.sheet_2)
+        cls.parser_1 = parser.ParserAskue(cls.sheet_1)
+        cls.parser_2 = parser.ParserAskue(cls.sheet_2)
 
     # for j in parser_2.raw_data:
     #     print(j)
@@ -167,8 +167,8 @@ class TestParserTechReg(unittest.TestCase):
         cls.wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
         cls.sheet_1 = cls.wb_tech_reg['10.2.37 ТО']
         cls.sheet_2 = cls.wb_tech_reg['10.3.37 ТО']
-        cls.parser_1 = Parser.ParserTechReg(cls.sheet_1)
-        cls.parser_2 = Parser.ParserTechReg(cls.sheet_2)
+        cls.parser_1 = parser.ParserTechReg(cls.sheet_1)
+        cls.parser_2 = parser.ParserTechReg(cls.sheet_2)
 
     # for j in parser_2.raw_data:
     #     print(j)
@@ -222,12 +222,12 @@ class TestPreProcessing(unittest.TestCase):
         cls.sheet_asu_109 = cls.wb_asu['109. МОСТ']
         cls.sheet_asu_107 = cls.wb_asu['107. АСУ ТП']
         cls.sheet_test_107 = cls.wb_test['107. АСУ ТП']
-        cls.parser_asu_109 = Parser.ParserAsu(cls.sheet_asu_109)
-        cls.parser_asu_107 = Parser.ParserAsu(cls.sheet_asu_107)
-        cls.parser_test_107 = Parser.ParserAsu(cls.sheet_test_107)
+        cls.parser_asu_109 = parser.ParserAsu(cls.sheet_asu_109)
+        cls.parser_asu_107 = parser.ParserAsu(cls.sheet_asu_107)
+        cls.parser_test_107 = parser.ParserAsu(cls.sheet_test_107)
 
     def test_find_num_in_str(self):
-        func = Pre_processing.find_num_in_str
+        func = pre_processing.find_num_in_str
         self.assertEqual(func('1'), 1)
         self.assertEqual(func('  85  \n'), 85)
         self.assertEqual(func('str str 43 str'), 43)
@@ -240,15 +240,15 @@ class TestPreProcessing(unittest.TestCase):
         # self.assertEqual(func(''), )
 
     def test_extract_system(self):
-        self.assertEqual(Pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
-        self.assertEqual(Pre_processing.find_system_by_sheet('108. АСУ И '), 'АСУ И')
-        self.assertEqual(Pre_processing.find_system_by_sheet('109. МОСТ'), 'АСУ АМ')
-        self.assertEqual(Pre_processing.find_system_by_sheet('Лист 1'), None)
-        self.assertEqual(Pre_processing.find_system_by_sheet(''), None)
+        self.assertEqual(pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
+        self.assertEqual(pre_processing.find_system_by_sheet('108. АСУ И '), 'АСУ И')
+        self.assertEqual(pre_processing.find_system_by_sheet('109. МОСТ'), 'АСУ АМ')
+        self.assertEqual(pre_processing.find_system_by_sheet('Лист 1'), None)
+        self.assertEqual(pre_processing.find_system_by_sheet(''), None)
 
     def test_parser_to_jobs(self):
-        jobs: List[Pre_processing.Job] = []
-        jobs.extend(Pre_processing.parser_to_jobs(self.parser_test_107))
+        jobs: List[pre_processing.Job] = []
+        jobs.extend(pre_processing.parser_to_jobs(self.parser_test_107))
         last = len(jobs) - 1
         self.assertEqual(jobs[0].object, 'Судопропускное сооружение С1')
         self.assertEqual(jobs[0].place, 'С1 Север')
@@ -262,13 +262,13 @@ class TestPreProcessing(unittest.TestCase):
         self.assertEqual(jobs[last].system, 'АСУ ТП')
 
     def test_filter_work_type(self):
-        self.assertEqual(Pre_processing.filter_work_type('ТО1'), 'ТО1')  # Rus to Rus
-        self.assertEqual(Pre_processing.filter_work_type('TO2'), 'ТО2')  # Eng to Rus
-        self.assertEqual(Pre_processing.filter_work_type('ETO'), 'ЕТО')  # Eng to Rus
-        self.assertEqual(Pre_processing.filter_work_type('ЕТО \nТО1'), 'ЕТО \nТО1')  # Eng+Rus to Rus
+        self.assertEqual(pre_processing.filter_work_type('ТО1'), 'ТО1')  # Rus to Rus
+        self.assertEqual(pre_processing.filter_work_type('TO2'), 'ТО2')  # Eng to Rus
+        self.assertEqual(pre_processing.filter_work_type('ETO'), 'ЕТО')  # Eng to Rus
+        self.assertEqual(pre_processing.filter_work_type('ЕТО \nТО1'), 'ЕТО \nТО1')  # Eng+Rus to Rus
 
     def test_extract_place_and_object(self):
-        func = Pre_processing.extract_place_and_object
+        func = pre_processing.extract_place_and_object
         self.assertEqual(func('Местоположение: Здание общеподстанционного управления 110 кВ ПС №360'),
                          ('ПС 360', 'Горская'))
         self.assertEqual(func('Судопропускное сооружение С1 Север ТП2'),
@@ -310,8 +310,8 @@ class TestTableGenerator(unittest.TestCase):
     def test_apply_style(self):
         test_out_wb = openpyxl.Workbook()
         ws = test_out_wb.active
-        area = Cell_styler.TableArea(first_row=3, last_row=6, first_col=2, last_col=4)
-        Cell_styler.apply_named_style(ws, self.style1, table_area=area)
+        area = cell_styler.TableArea(first_row=3, last_row=6, first_col=2, last_col=4)
+        cell_styler.apply_named_style(ws, self.style1, table_area=area)
         for row in range(area.first_row, area.last_row + 1):
             for col in range(area.first_col, area.last_col + 1):
                 self.assertEqual(ws.cell(row, col).style, self.style1.name)
@@ -324,7 +324,7 @@ class TestApplicationFunctions(unittest.TestCase):
         cls.wb_test_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
 
     def test_find_sheets_asu(self):
-        sheets = Application.find_sheets_asu(self.wb_test_asu)
+        sheets = application.find_sheets_asu(self.wb_test_asu)
         self.assertEqual(sheets[0].title, '107. АСУ ТП')
         self.assertEqual(sheets[1].title, '108. АСУ И ')
         self.assertEqual(sheets[2].title, '109. МОСТ')
@@ -332,7 +332,7 @@ class TestApplicationFunctions(unittest.TestCase):
         self.assertEqual(len(sheets), 4)
 
     def test_find_sheets_vols(self):
-        sheets = Application.find_sheets_vols(self.wb_test_vols)
+        sheets = application.find_sheets_vols(self.wb_test_vols)
         self.assertEqual(sheets[0].title, '8.1.38 ТО')
         self.assertEqual(sheets[1].title, '10.2.38 ТО')
         self.assertEqual(sheets[2].title, '10.3.38 ТО')
@@ -344,7 +344,7 @@ class TestDutySchedule(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.workbook = openpyxl.load_workbook(r'.\input data\Test график дежурств 19.02.xlsx')
-        cls.schedule = Duty_schedule.DutySchedule(cls.workbook.worksheets[0])
+        cls.schedule = duty_schedule.DutySchedule(cls.workbook.worksheets[0])
 
     def test_parsing(self):
         self.assertEqual(self.schedule._data_last_col, 30)
