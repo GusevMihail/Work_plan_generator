@@ -347,26 +347,94 @@ class TestDutySchedule(unittest.TestCase):
         cls.workbook = openpyxl.load_workbook(r'.\input data\Test график дежурств 19.02.xlsx')
         cls.schedule = duty_schedule.DutySchedule(cls.workbook.worksheets[0])
 
-    def test_parsing(self):
-        self.assertEqual(self.schedule._data_last_col, 30)
+    def test_date2col(self):
+        self.assertEqual(self.schedule._date2col(datetime.date(2019, 2, 1)), 3)
+        self.assertEqual(self.schedule._date2col(datetime.date(2019, 2, 15)), 17)
+        self.assertEqual(self.schedule._date2col(datetime.date(2019, 2, 28)), 30)
 
-        self.assertEqual(self.schedule._day2col(1), 3)
-        self.assertEqual(self.schedule._day2col(15), 17)
-        self.assertEqual(self.schedule._day2col(28), 30)
-        self.assertEqual(self.schedule._day2col(29), None)
+    def test_find_workers_row(self):
+        workers = duty_schedule.team_s1.workers
+        # print(duty_schedule.team_s1)
+        correct_rows = [8, 9, 10, 11]
+        self.assertEqual(len(workers), len(correct_rows))
+        for i in range(0, len(workers)):
+            # print(f'{self.schedule._find_worker_row(workers[i])} - {correct_rows[i]}')
+            self.assertEqual(self.schedule._find_worker_row(workers[i]), correct_rows[i])
 
-        self.assertEqual(self.schedule._is_workday(1), True)
-        self.assertEqual(self.schedule._is_workday(2), False)
-        self.assertEqual(self.schedule._is_workday(3), False)
-        self.assertEqual(self.schedule._is_workday(22), True)
-        self.assertEqual(self.schedule._is_workday(28), True)
-        self.assertEqual(self.schedule._is_workday(29), None)
+        workers = duty_schedule.team_s2.workers
+        correct_rows = [14, 13]
+        self.assertEqual(len(workers), len(correct_rows))
+        for i in range(0, len(workers)):
+            self.assertEqual(self.schedule._find_worker_row(workers[i]), correct_rows[i])
 
+        workers = duty_schedule.team_v.workers
+        correct_rows = [17, 18, 19]
+        self.assertEqual(len(workers), len(correct_rows))
+        for i in range(0, len(workers)):
+            self.assertEqual(self.schedule._find_worker_row(workers[i]), correct_rows[i])
+
+        workers = duty_schedule.team_vols.workers
+        correct_rows = [23, 21, 22]
+        self.assertEqual(len(workers), len(correct_rows))
+        for i in range(0, len(workers)):
+            self.assertEqual(self.schedule._find_worker_row(workers[i]), correct_rows[i])
+
+        workers = duty_schedule.team_tk.workers
+        correct_rows = [22, 21, 23]
+        self.assertEqual(len(workers), len(correct_rows))
+        for i in range(0, len(workers)):
+            self.assertEqual(self.schedule._find_worker_row(workers[i]), correct_rows[i])
+
+    def test_get_worker_status(self):
+        w1 = duty_schedule.Worker('Гусев', 'Михаил', 'Владимирович', '+79675904368')
+        w2 = duty_schedule.Worker('Мулин', 'Николай', 'Николаевич', '+79112283889')
+        self.assertEqual(self.schedule.get_worker_status(w1, datetime.date(2019, 2, 1)),
+                         duty_schedule.WorkerStatus.ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w1, datetime.date(2019, 2, 2)),
+                         duty_schedule.WorkerStatus.ON_DUTY)
+        self.assertEqual(self.schedule.get_worker_status(w1, datetime.date(2019, 2, 3)),
+                         duty_schedule.WorkerStatus.NOT_ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w1, datetime.date(2019, 2, 4)),
+                         duty_schedule.WorkerStatus.NOT_ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w1, datetime.date(2019, 2, 6)),
+                         duty_schedule.WorkerStatus.NOT_ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w1, datetime.date(2019, 2, 7)),
+                         duty_schedule.WorkerStatus.ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w2, datetime.date(2019, 2, 17)),
+                         duty_schedule.WorkerStatus.NOT_ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w2, datetime.date(2019, 2, 18)),
+                         duty_schedule.WorkerStatus.ON_DUTY)
+        self.assertEqual(self.schedule.get_worker_status(w2, datetime.date(2019, 2, 19)),
+                         duty_schedule.WorkerStatus.NOT_ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w2, datetime.date(2019, 2, 20)),
+                         duty_schedule.WorkerStatus.NOT_ON_WORK)
+        self.assertEqual(self.schedule.get_worker_status(w2, datetime.date(2019, 2, 22)),
+                         duty_schedule.WorkerStatus.ON_WORK)
+
+    def test_is_workday(self):
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 1)))
+        self.assertFalse(self.schedule.is_workday(datetime.date(2019, 2, 2)))
+        self.assertFalse(self.schedule.is_workday(datetime.date(2019, 2, 3)))
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 4)))
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 15)))
+        self.assertFalse(self.schedule.is_workday(datetime.date(2019, 2, 16)))
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 21)))
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 22)))
+        self.assertFalse(self.schedule.is_workday(datetime.date(2019, 2, 23)))
+        self.assertFalse(self.schedule.is_workday(datetime.date(2019, 2, 24)))
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 25)))
+        self.assertTrue(self.schedule.is_workday(datetime.date(2019, 2, 26)))
+
+    def test_get_duty_str(self):
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 1)), 'Макаров В.В.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 2)), 'Гусев М.В.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 3)), 'Кушмылев Е.П.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 4)), 'Ильин А.В.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 11)), 'Подольский А.В.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 12)), 'Кушмылев Е.П.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 22)), 'Огородников А.Ю.')
+        self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 25)), 'Ильин А.В.')
 
 
 if __name__ == '__main__':
     unittest.main()
-
-    # TP = TestParser()
-    # jobs = []
-    # Pre_processing.parser_to_jobs(TP.parser_test_107, jobs)
