@@ -158,12 +158,6 @@ class ParserVolsLikeSys(AbstractParser):
             if exit_flag:
                 break
 
-        # for row in range(1, max_table_row):
-        #     cell = xstr(self.sheet.cell(row, self._data_first_col).value)
-        #     if cell == '1' or cell == '2':  # TODO temp code. refactor this method
-        #         self._days_row = row
-        #         break
-
         for col in range(self._data_first_col, max_table_col):
             cell_value = xint(self.sheet.cell(self._days_row, col).value)
             column_hidden = self.sheet.column_dimensions[get_column_letter(col)].hidden
