@@ -7,7 +7,7 @@ from openpyxl.styles import NamedStyle
 
 import application
 import cell_styler
-import parser
+import works_parser
 import pre_processing
 import duty_schedule
 
@@ -15,7 +15,7 @@ import duty_schedule
 class TestParser(unittest.TestCase):
 
     def test_xstr(self):
-        func = parser.xstr
+        func = works_parser.xstr
         self.assertEqual(func('test str'), 'test str')
         self.assertEqual(func('   test str \n'), 'test str')
         self.assertEqual(func('123'), '123')
@@ -27,7 +27,7 @@ class TestParser(unittest.TestCase):
         self.assertEqual(func('\n   \t'), None)
 
     def test_xint(self):
-        func = parser.xint
+        func = works_parser.xint
         self.assertEqual(func('1'), 1)
         self.assertEqual(func('  85  \n'), 85)
         self.assertEqual(func('str str 43 str'), 43)
@@ -48,9 +48,9 @@ class TestParserAsu(unittest.TestCase):
         cls.sheet_asu_109 = cls.wb_asu['109. МОСТ']
         cls.sheet_asu_107 = cls.wb_asu['107. АСУ ТП']
         cls.sheet_test_107 = cls.wb_test['107. АСУ ТП']
-        cls.parser_asu_109 = parser.ParserAsu(cls.sheet_asu_109)
-        cls.parser_asu_107 = parser.ParserAsu(cls.sheet_asu_107)
-        cls.parser_test_107 = parser.ParserAsu(cls.sheet_test_107)
+        cls.parser_asu_109 = works_parser.ParserAsu(cls.sheet_asu_109)
+        cls.parser_asu_107 = works_parser.ParserAsu(cls.sheet_asu_107)
+        cls.parser_test_107 = works_parser.ParserAsu(cls.sheet_test_107)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_asu_109._data_area, (8, 6, 8, 36))
@@ -76,8 +76,8 @@ class TestParserVols(unittest.TestCase):
         cls.wb_vols = openpyxl.load_workbook(r'.\input data\Test Schedule VOLS.xlsx')
         cls.sheet_1 = cls.wb_vols['8.1.38 ТО']
         cls.sheet_2 = cls.wb_vols['10.4.38 ТО']
-        cls.parser_1 = parser.ParserVols(cls.sheet_1)
-        cls.parser_2 = parser.ParserVols(cls.sheet_2)
+        cls.parser_1 = works_parser.ParserVols(cls.sheet_1)
+        cls.parser_2 = works_parser.ParserVols(cls.sheet_2)
 
     def test_find_data_boundaries(self):
         self.assertEqual(self.parser_1._data_first_col, 7)
@@ -115,8 +115,8 @@ class TestParserAskue(unittest.TestCase):
         cls.wb_askue = openpyxl.load_workbook(r'.\input data\Test Schedule Askue.xlsx')
         cls.sheet_1 = cls.wb_askue['февраль 8.1.36 ТО']
         cls.sheet_2 = cls.wb_askue['Февраль 10.4.36 ТО']
-        cls.parser_1 = parser.ParserAskue(cls.sheet_1)
-        cls.parser_2 = parser.ParserAskue(cls.sheet_2)
+        cls.parser_1 = works_parser.ParserAskue(cls.sheet_1)
+        cls.parser_2 = works_parser.ParserAskue(cls.sheet_2)
 
     # for j in parser_2.raw_data:
     #     print(j)
@@ -167,8 +167,8 @@ class TestParserTechReg(unittest.TestCase):
         cls.wb_tech_reg = openpyxl.load_workbook(r'.\input data\Test Schedule TechReg.xlsx')
         cls.sheet_1 = cls.wb_tech_reg['10.2.37 ТО']
         cls.sheet_2 = cls.wb_tech_reg['10.3.37 ТО']
-        cls.parser_1 = parser.ParserTechReg(cls.sheet_1)
-        cls.parser_2 = parser.ParserTechReg(cls.sheet_2)
+        cls.parser_1 = works_parser.ParserTechReg(cls.sheet_1)
+        cls.parser_2 = works_parser.ParserTechReg(cls.sheet_2)
 
     # for j in parser_2.raw_data:
     #     print(j)
@@ -222,9 +222,9 @@ class TestPreProcessing(unittest.TestCase):
         cls.sheet_asu_109 = cls.wb_asu['109. МОСТ']
         cls.sheet_asu_107 = cls.wb_asu['107. АСУ ТП']
         cls.sheet_test_107 = cls.wb_test['107. АСУ ТП']
-        cls.parser_asu_109 = parser.ParserAsu(cls.sheet_asu_109)
-        cls.parser_asu_107 = parser.ParserAsu(cls.sheet_asu_107)
-        cls.parser_test_107 = parser.ParserAsu(cls.sheet_test_107)
+        cls.parser_asu_109 = works_parser.ParserAsu(cls.sheet_asu_109)
+        cls.parser_asu_107 = works_parser.ParserAsu(cls.sheet_asu_107)
+        cls.parser_test_107 = works_parser.ParserAsu(cls.sheet_test_107)
 
     def test_find_num_in_str(self):
         func = pre_processing.find_num_in_str
