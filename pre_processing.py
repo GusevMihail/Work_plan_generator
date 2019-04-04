@@ -2,15 +2,42 @@ import datetime
 import random
 import re
 from typing import List
+from enum import Enum
+
+
+class Systems(Enum):
+    ASU_TP = 'АСУ ТП'
+    ASU_I = 'АСУ И'
+    ASU_AM = 'АСУ АМ'
+    LVS = 'ЛВС'
+    VOLS = 'ВОЛС'
+    TK = 'Телеканал М2'
+    ASKUE = 'АИИСКУЭ'
+    TECH_REG = 'Тех. учет'
+
+
+class Objects(Enum):
+    S1 = 'Судопропускное сооружение С1'
+    S2 = 'Судопропускное сооружение С2'
+    V1 = 'Водопропускное сооружение В1'
+    V2 = 'Водопропускное сооружение В2'
+    V3 = 'Водопропускное сооружение В3'
+    V4 = 'Водопропускное сооружение В4'
+    V5 = 'Водопропускное сооружение В5'
+    V6 = 'Водопропускное сооружение В6'
+    ZU = 'Здание управления КЗС'
+    PS360 = 'Горская'
+    PS223 = 'Бронка'
+    KOTLIN = 'Котлин'
 
 
 class Job:
     def __init__(self):
-        self.date = None
-        self.object = None
-        self.system = None
-        self.work_type = None
-        self.place = None
+        self.date: datetime.date = None
+        self.object: Objects = None
+        self.system: Systems = None
+        self.work_type: str = None
+        self.place: str = None
         self.worker = None
 
     @staticmethod
@@ -51,13 +78,13 @@ class Job:
                       'Огородников Алексей Юрьевич +79313196196')
 
         random.seed(self.date)
-        if self.system in ('ЛВС', 'ВОЛС', 'Телеканал М2', 'АИИСКУЭ', 'Тех. учет'):
+        if self.system in (Systems.LVS, Systems.VOLS, Systems.TK, Systems.ASKUE, Systems.TECH_REG):
             self.worker = random.choice(group_vols)
-        elif 'С1' in self.object:
+        elif self.object == Objects.S1:
             self.worker = random.choice(group_s1)
-        elif 'С2' in self.object:
+        elif self.object == Objects.S2:
             self.worker = random.choice(group_s2)
-        elif 'Здание управления' in self.object:
+        elif self.object == Objects.ZU:
             self.worker = random.choice(group_s2)
         else:
             self.worker = random.choice(group_v)
@@ -94,16 +121,16 @@ def extract_month_and_year(raw_date: str):
 
 
 def extract_place_and_object(raw_place: str):
-    places_names = {('ЗУ КЗС',): ('Здание управления КЗС', 'Здание управления КЗС'),
-                    ('Здание управления',): ('Здание управления КЗС', 'Здание управления КЗС'),
-                    ('АМ',): ('С2 АМ', 'Судопропускное сооружение С2'),
-                    ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', 'Судопропускное сооружение С1'),
-                    ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', 'Судопропускное сооружение С2'),
-                    ('Бронка',): ('ПС 223', 'Бронка'),
-                    ('ПС', '223'): ('ПС 223', 'Бронка'),
-                    ('ПС', '360'): ('ПС 360', 'Горская'),
-                    ('ПС', '86'): ('ПС 86', 'Судопропускное сооружение С1'),
-                    ('Котлин',): ('Котлин', 'Котлин'),
+    places_names = {('ЗУ КЗС',): ('Здание управления КЗС', Objects.ZU),
+                    ('Здание управления',): ('Здание управления КЗС', Objects.ZU),
+                    ('АМ',): ('С2 АМ', Objects.S2),
+                    ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
+                    ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2),
+                    ('Бронка',): ('ПС 223', Objects.PS223),
+                    ('ПС', '223'): ('ПС 223', Objects.PS223),
+                    ('ПС', '360'): ('ПС 360', Objects.PS360),
+                    ('ПС', '86'): ('ПС 86', Objects.S1),
+                    ('Котлин',): ('Котлин', Objects.KOTLIN),
                     }
 
     raw_place = raw_place.strip(' ,.\t\n')
@@ -129,22 +156,26 @@ def extract_place_and_object(raw_place: str):
     # find В1..В6 objects
     search_obj = re.search(r'В\W{,3}(\d)', raw_place)
     if search_obj:
-        return 'В' + search_obj.group(1), 'Водопропускное сооружение ' + 'В' + search_obj.group(1)
+        for obj in Objects:
+            if 'В' + search_obj.group(1) in obj.value:
+                return 'В' + search_obj.group(1), obj
 
     # find С1, С2 objects
     search_obj = re.search(r'(С\d)(.*)', raw_place)
     if search_obj:
-        return ''.join(search_obj.groups()), 'Судопропускное сооружение ' + search_obj.group(1)
+        for obj in Objects:
+            if search_obj.group(1) in obj.value:
+                return ''.join(search_obj.groups()), obj
 
     # print(f'extract_place_and_object: {raw_place} - нет совпадений с шаблоном')  # debug
     return raw_place, 'unknown'
 
 
 def find_system_by_sheet(sheet_name):
-    sheet_names = {'АСУ ТП': 'АСУ ТП',
-                   'АСУ И': 'АСУ И',
-                   'МОСТ': 'АСУ АМ',
-                   'ЛВС': 'ЛВС'}
+    sheet_names = {'АСУ ТП': Systems.ASU_TP,
+                   'АСУ И': Systems.ASU_I,
+                   'МОСТ': Systems.ASU_AM,
+                   'ЛВС': Systems.LVS}
 
     for name, system in sheet_names.items():
         if name in sheet_name:

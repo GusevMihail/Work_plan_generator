@@ -6,6 +6,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet import Worksheet
 
 import pre_processing
+from pre_processing import Systems, Objects
 from cell_styler import TableArea
 
 
@@ -121,7 +122,7 @@ class ParserVolsLikeSys(AbstractParser):
 
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
-        self.system = 'ВОЛС'
+        self.system = None
         self._place_in_header: str = None
         self._work_type_col = 4
         self._data_first_col = 7
@@ -225,7 +226,7 @@ class ParserVols(ParserVolsLikeSys):
 
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
-        self.system = 'ВОЛС'  # unique value
+        self.system = Systems.VOLS  # unique value
         self._place_in_header: str = None
         self._work_type_col = 4
         self._data_first_col = 7  # unique value
@@ -242,7 +243,7 @@ class ParserVols(ParserVolsLikeSys):
 class ParserTk(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
-        self.system = 'Телеканал М2'  # unique value
+        self.system = Systems.TK  # unique value
         self._place_in_header: str = None
         self._work_type_col = 4
         self._data_first_col = 7  # unique value
@@ -259,7 +260,7 @@ class ParserTk(ParserVolsLikeSys):
 class ParserAskue(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
-        self.system = 'АИИСКУЭ'  # unique value
+        self.system = Systems.ASKUE  # unique value
         self._place_in_header: str = None
         self._work_type_col = 4
         self._data_first_col = 6  # unique value
@@ -276,7 +277,7 @@ class ParserAskue(ParserVolsLikeSys):
 class ParserTechReg(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
-        self.system = 'Тех. учет'  # unique value
+        self.system = Systems.TECH_REG  # unique value
         self._place_in_header: str = None
         self._work_type_col = 6  # unique value
         self._data_first_col = 9  # unique value

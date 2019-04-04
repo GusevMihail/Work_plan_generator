@@ -39,7 +39,7 @@ def process_files(folder: str, find_sheets_function, parser_class):
 
 def make_xlsx_from_jobs(jobs_list):
     print('Генерация планов работ \n ...')
-    jobs_list.sort(key=lambda x: (x.date, x.object, x.system, x.work_type))
+    jobs_list.sort(key=lambda x: (x.date, x.object.value, x.system.value, x.work_type))
     jobs_by_days = groupby(jobs, key=lambda x: x.date)
     for job in jobs_by_days:
         template_filename = r'.\input data\Template.xlsx'

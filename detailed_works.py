@@ -15,6 +15,6 @@ def work_details(job: Job) -> str:
         system = sheet.cell(row, system_col).value
         work_type = sheet.cell(row, work_type_col).value
         details = sheet.cell(row, details_col).value
-        if job.system == system and job.work_type == work_type:
+        if job.system.value == system and job.work_type == work_type:
             return details
     return None

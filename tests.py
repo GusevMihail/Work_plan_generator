@@ -9,6 +9,7 @@ import application
 import cell_styler
 import works_parser
 import pre_processing
+from pre_processing import Systems, Objects
 import duty_schedule
 
 
@@ -240,9 +241,9 @@ class TestPreProcessing(unittest.TestCase):
         # self.assertEqual(func(''), )
 
     def test_extract_system(self):
-        self.assertEqual(pre_processing.find_system_by_sheet('107. АСУ ТП'), 'АСУ ТП')
-        self.assertEqual(pre_processing.find_system_by_sheet('108. АСУ И '), 'АСУ И')
-        self.assertEqual(pre_processing.find_system_by_sheet('109. МОСТ'), 'АСУ АМ')
+        self.assertEqual(pre_processing.find_system_by_sheet('107. АСУ ТП'), Systems.ASU_TP)
+        self.assertEqual(pre_processing.find_system_by_sheet('108. АСУ И '), Systems.ASU_I)
+        self.assertEqual(pre_processing.find_system_by_sheet('109. МОСТ'), Systems.ASU_AM)
         self.assertEqual(pre_processing.find_system_by_sheet('Лист 1'), None)
         self.assertEqual(pre_processing.find_system_by_sheet(''), None)
 
@@ -250,16 +251,16 @@ class TestPreProcessing(unittest.TestCase):
         jobs: List[pre_processing.Job] = []
         jobs.extend(pre_processing.parser_to_jobs(self.parser_test_107))
         last = len(jobs) - 1
-        self.assertEqual(jobs[0].object, 'Судопропускное сооружение С1')
+        self.assertEqual(jobs[0].object, Objects.S1)
         self.assertEqual(jobs[0].place, 'С1 Север')
         self.assertEqual(jobs[0].work_type, 'ТО1')
         self.assertEqual(jobs[0].date, datetime.date(2018, 5, 1))
-        self.assertEqual(jobs[0].system, 'АСУ ТП')
-        self.assertEqual(jobs[last].object, 'Здание управления КЗС')
+        self.assertEqual(jobs[0].system, Systems.ASU_TP)
+        self.assertEqual(jobs[last].object, Objects.ZU)
         self.assertEqual(jobs[last].place, 'Здание управления КЗС')
         self.assertEqual(jobs[last].work_type, 'ТО4')
         self.assertEqual(jobs[last].date, datetime.date(2018, 5, 31))
-        self.assertEqual(jobs[last].system, 'АСУ ТП')
+        self.assertEqual(jobs[last].system, Systems.ASU_TP)
 
     def test_filter_work_type(self):
         self.assertEqual(pre_processing.filter_work_type('ТО1'), 'ТО1')  # Rus to Rus
@@ -270,34 +271,34 @@ class TestPreProcessing(unittest.TestCase):
     def test_extract_place_and_object(self):
         func = pre_processing.extract_place_and_object
         self.assertEqual(func('Местоположение: Здание общеподстанционного управления 110 кВ ПС №360'),
-                         ('ПС 360', 'Горская'))
+                         ('ПС 360', Objects.PS360))
         self.assertEqual(func('Судопропускное сооружение С1 Север ТП2'),
-                         ('С1 Север ТП2', 'Судопропускное сооружение С1'))
+                         ('С1 Север ТП2', Objects.S1))
         self.assertEqual(func('Судопропускное сооружение С1 Север ПС 110/10 кВ'),
-                         ('С1 ПС 110/10кВ', 'Судопропускное сооружение С1'))
+                         ('С1 ПС 110/10кВ', Objects.S1))
         self.assertEqual(func('Здание управления'),
-                         ('Здание управления КЗС', 'Здание управления КЗС'))
+                         ('Здание управления КЗС', Objects.ZU))
         self.assertEqual(func('ПТК ЗУ КЗС'),
-                         ('Здание управления КЗС', 'Здание управления КЗС'))
+                         ('Здание управления КЗС', Objects.ZU))
         self.assertEqual(func('Оборудование АСУ АМ'),
-                         ('С2 АМ', 'Судопропускное сооружение С2'))
+                         ('С2 АМ', Objects.S2))
         self.assertEqual(func('Водопропускное сооружение В-6'),
-                         ('В6', 'Водопропускное сооружение В6'))
+                         ('В6', Objects.V6))
         self.assertEqual(func('ПТК судопропускного сооружения - ПТК C1 север'),  # eng 'C'
-                         ('С1 Север', 'Судопропускное сооружение С1'))
+                         ('С1 Север', Objects.S1))
         self.assertEqual(func('ПТК водопропускного сооружения ВЗ - ПТК ВЗ.'),
-                         ('В3', 'Водопропускное сооружение В3'))
+                         ('В3', Objects.V3))
         self.assertEqual(func('2. Котлин'),
-                         ('Котлин', 'Котлин'))
+                         ('Котлин', Objects.KOTLIN))
         self.assertEqual(func('1. Бронка'),
-                         ('ПС 223', 'Бронка'))
+                         ('ПС 223', Objects.PS223))
         self.assertEqual(func('Местоподожение:  Здание трансформаторной подстанции '
                               '110/10 кВ ПС С1 судопропускного сооружения С-1'),
-                         ('С1 ПС 110/10кВ', 'Судопропускное сооружение С1'))
+                         ('С1 ПС 110/10кВ', Objects.S1))
         self.assertEqual(func('Местоподожение: Трансформаторная подстанция ПС С2 110/10 кВ'),
-                         ('С2 ПС 110/10кВ', 'Судопропускное сооружение С2'))
+                         ('С2 ПС 110/10кВ', Objects.S2))
         self.assertEqual(func('Местоподожение:Здание общеподстанционного управления 110 кВ  ПС №360'),
-                         ('ПС 360', 'Горская'))
+                         ('ПС 360', Objects.PS360))
         # self.assertEqual(func(''),
         #                  ('', ''))
 

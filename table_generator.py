@@ -5,7 +5,7 @@ import openpyxl
 from openpyxl.styles import Font, Border, Side, Alignment
 
 from cell_styler import apply_style, TableArea
-from pre_processing import Job
+from pre_processing import Job, Systems, Objects
 from detailed_works import work_details
 
 
@@ -43,7 +43,7 @@ class WorkPlan:
         date_cell = self._ws.cell(row=6, column=1)
         date_cell.value = self.jobs[0].date
 
-    def _write_obj_row(self, obj_name):
+    def _write_obj_row(self, obj_name: Objects):
         self._ws.merge_cells(start_row=self._current_row, end_row=self._current_row,
                              start_column=self._first_col, end_column=self._last_col)
 
@@ -53,7 +53,7 @@ class WorkPlan:
                     font=self._bold_font,
                     alignment=self._align_center)
 
-        self._ws.cell(self._current_row, self._first_col).value = obj_name
+        self._ws.cell(self._current_row, self._first_col).value = obj_name.value
         self._current_row += 1
 
     def _write_work_row(self, job: Job):
@@ -78,7 +78,7 @@ class WorkPlan:
         work_end = '18:00'
         worker_col = 7
         self._ws.cell(self._current_row, organization_col).value = organization
-        self._ws.cell(self._current_row, system_col).value = job.system
+        self._ws.cell(self._current_row, system_col).value = job.system.value
         self._ws.cell(self._current_row, work_col).value = work
         self._ws.cell(self._current_row, place_col).value = job.place
         self._ws.cell(self._current_row, work_start_col).value = work_start

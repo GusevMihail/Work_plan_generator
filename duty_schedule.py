@@ -62,9 +62,11 @@ all_workers = Team([
     Worker('Огородников', 'Алексей', 'Юрьевич', '+79313196196')
 ])
 
-# team_s1 = (w for w in all_workers if w.last_name in ('Гусев', 'Харитонов', 'Мулин', 'Кушмылев'))
-# team_s2 = (w for w in all_workers if w.last_name in ('Гусев', 'Харитонов', 'Мулин', 'Кушмылев'))
 team_s1 = Team(all_workers.get_by_last_names(('Гусев', 'Харитонов', 'Мулин', 'Кушмылев')))
+team_s2 = Team(all_workers.get_by_last_names(('Каприца', 'Горнов')))
+team_v = Team(all_workers.get_by_last_names(('Подольский', 'Кокоев', 'Санжара')))
+team_vols = Team(all_workers.get_by_last_names(('Ильин', 'Ястребов')))
+team_tk = Team(all_workers.get_by_last_names(('Огородников', 'Ястребов')))
 
 
 class DutySchedule:
@@ -120,4 +122,10 @@ class DutySchedule:
 if __name__ == '__main__':
     print(all_workers)
 
-    print(team_s1)
+    # print(team_s1)
+    # print(team_s2)
+    # print(team_v)
+    # print(team_vols)
+    # print(team_tk)
+
+
