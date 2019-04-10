@@ -7,10 +7,10 @@ from openpyxl.styles import NamedStyle
 
 import application
 import cell_styler
-import works_parser
-import pre_processing
-from pre_processing import Systems, Objects
 import duty_schedule
+import pre_processing
+import works_parser
+from pre_processing import Systems, Objects
 
 
 class TestParser(unittest.TestCase):
@@ -345,7 +345,7 @@ class TestDutySchedule(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.workbook = openpyxl.load_workbook(r'.\input data\Test график дежурств 19.02.xlsx')
-        cls.schedule = duty_schedule.DutySchedule(cls.workbook.worksheets[0])
+        cls.schedule = duty_schedule.DutySchedule(cls.workbook.worksheets[0], duty_schedule.all_workers)
 
     def test_date2col(self):
         self.assertEqual(self.schedule._date2col(datetime.date(2019, 2, 1)), 3)
@@ -434,6 +434,18 @@ class TestDutySchedule(unittest.TestCase):
         self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 12)), 'Кушмылев Е.П.')
         self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 22)), 'Огородников А.Ю.')
         self.assertEqual(self.schedule.get_duty_str(datetime.date(2019, 2, 25)), 'Ильин А.В.')
+
+    def test_get_performer(self):
+
+        self.assertEqual(self.schedule.get_performer(duty_schedule.team_s1,
+                                                     datetime.date(2019, 2, 1)).last_name, 'Харитонов')
+        self.assertEqual(self.schedule.get_performer(duty_schedule.team_s1,
+                                                     datetime.date(2019, 2, 2)).last_name, 'Гусев')
+        self.assertEqual(self.schedule.get_performer(duty_schedule.team_s2,
+                                                     datetime.date(2019, 2, 2)).last_name, 'Гусев')
+        self.assertEqual(self.schedule.get_performer(duty_schedule.team_s1,
+                                                     datetime.date(2019, 2, 8)).last_name, 'Гусев')
+
 
 
 if __name__ == '__main__':

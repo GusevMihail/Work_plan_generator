@@ -1,8 +1,9 @@
 import datetime
 import random
 import re
-from typing import List
 from enum import Enum
+from typing import List, Optional
+
 
 
 class Systems(Enum):
@@ -33,12 +34,13 @@ class Objects(Enum):
 
 class Job:
     def __init__(self):
-        self.date: datetime.date = None
-        self.object: Objects = None
-        self.system: Systems = None
-        self.work_type: str = None
-        self.place: str = None
-        self.worker = None
+        self.date: Optional[datetime.date] = None
+        self.object: Optional[Objects] = None
+        self.system: Optional[Systems] = None
+        self.work_type: Optional[str] = None
+        self.place: Optional[str] = None
+        from duty_schedule import Worker
+        self.performer: Optional[Worker] = None
 
     @staticmethod
     def _print_str(value, length=0):
@@ -53,11 +55,11 @@ class Job:
             f'work:{self._print_str(self.work_type, 10)}' \
             f'date:{self._print_str(self.date, 15)}' \
             f'sys:{self._print_str(self.system, 15)}' \
-            f'worker:{self._print_str(self.worker)}'
+            f'performer:{self._print_str(self.performer)}'
 
     def __repr__(self):
         return f'obj:{self.object}; place:{self.place}; work:{self.work_type}; ' \
-            f'date:{self.date};  sys:{self.system}; worker:{self.worker}'
+            f'date:{self.date};  sys:{self.system}; performer:{self.performer}'
 
     def find_worker(self):
         group_s1 = ('Гусев Михаил Владимирович +79675904368',
@@ -79,18 +81,18 @@ class Job:
 
         random.seed(self.date)
         if self.system in (Systems.LVS, Systems.VOLS, Systems.TK, Systems.ASKUE, Systems.TECH_REG):
-            self.worker = random.choice(group_vols)
+            self.performer = random.choice(group_vols)
         elif self.object == Objects.S1:
-            self.worker = random.choice(group_s1)
+            self.performer = random.choice(group_s1)
         elif self.object == Objects.S2:
-            self.worker = random.choice(group_s2)
+            self.performer = random.choice(group_s2)
         elif self.object == Objects.ZU:
-            self.worker = random.choice(group_s2)
+            self.performer = random.choice(group_s2)
         else:
-            self.worker = random.choice(group_v)
+            self.performer = random.choice(group_v)
 
 
-def find_num_in_str(string: str) -> int:
+def find_num_in_str(string: str) -> Optional[int]:
     result = re.findall(r'\d+', string)
     if len(result) > 0:
         return int(result[0])
@@ -202,6 +204,26 @@ def parser_to_jobs(parser) -> List[Job]:
         job.work_type = filter_work_type(raw_job.work_type)
         job.date = datetime.date(year, month, raw_job.day)
         job.system = parser.system
-        job.find_worker()
+
+        from duty_schedule import team_s1, team_s2, team_v, team_tk, team_vols, team_askue
+
+        if job.system in (Systems.LVS, Systems.VOLS):
+            team = team_vols
+        elif job.system == Systems.TK:
+            team = team_tk
+        elif job.system in (Systems.ASKUE, Systems.TECH_REG):
+            team = team_askue
+        elif job.object == Objects.S1:
+            team = team_s1
+        elif job.object in (Objects.S2, Objects.ZU):
+            team = team_s2
+        else:
+            team = team_v
+
+        from application import process_duty_schedules
+
+        for schedule in process_duty_schedules(r'.\input data\Графики дежурств'):
+            if (schedule.month, schedule.year) == (month, year):
+                job.performer = schedule.get_performer(team, job.date)
         jobs.append(job)
     return jobs

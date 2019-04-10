@@ -1,15 +1,14 @@
-from typing import List
 from itertools import groupby
+from typing import List
 
 import openpyxl
 from openpyxl.styles import Font, Border, Side, Alignment
 
 from cell_styler import apply_style, TableArea
-from pre_processing import Job, Systems, Objects
-from detailed_works import work_details
 
 
 class WorkPlan:
+    from pre_processing import Job, Objects
 
     def __init__(self, jobs: List[Job], template_path: str):
         self.jobs = jobs
@@ -57,6 +56,8 @@ class WorkPlan:
         self._current_row += 1
 
     def _write_work_row(self, job: Job):
+        from detailed_works import work_details
+
         current_row_area = TableArea(self._current_row, self._first_col, self._current_row, self._last_col)
         apply_style(self._ws, current_row_area,
                     border=self._thin_border,
@@ -83,7 +84,7 @@ class WorkPlan:
         self._ws.cell(self._current_row, place_col).value = job.place
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end
-        self._ws.cell(self._current_row, worker_col).value = job.worker
+        self._ws.cell(self._current_row, worker_col).value = str(job.performer)
         self._current_row += 1
 
     def make_plan(self):

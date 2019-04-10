@@ -1,14 +1,10 @@
-from typing import Tuple, List
-
-from openpyxl.worksheet import Worksheet  # TODO refactor this for new version of openpyxl
-
-from works_parser import xint
-
-from enum import Enum
-
 from datetime import date
+from enum import Enum
+from typing import List, Iterable, Union
 
-from pre_processing import extract_month_and_year
+from openpyxl.worksheet.worksheet import Worksheet
+
+from pre_processing import extract_month_and_year, Systems, Objects
 
 
 class Worker:
@@ -26,29 +22,30 @@ class Worker:
 
 
 class Team:
-    def __init__(self, workers: List[Worker] = None):
+    def __init__(self, name: Union[None, str, Systems, Objects] = None, workers: List[Worker] = None):
+        self.name = name
         if workers is None:
             self.workers = []
         else:
             self.workers = workers
 
     def __str__(self):
-        return ', '.join(w.last_name for w in self.workers)
+        return self.name + ': ' + ', '.join(w.last_name for w in self.workers)
 
     def __repr__(self):
         return self.__str__()
 
     def get_by_last_name(self, last_name: str) -> Worker:
         for w in self.workers:
-            if w.last_name == last_name:
+            if w.last_name in last_name:
                 return w
 
-    def get_by_last_names(self, last_names: Tuple[str]) -> List[Worker]:
+    def get_by_last_names(self, last_names: Iterable[str]) -> List[Worker]:
         return [self.get_by_last_name(name) for name in last_names]
 
 
 # workers directory
-all_workers = Team([
+all_workers = Team('Все сотрудники', [
     Worker('Харитонов', 'Виктор', 'Яковлевич', '+79319642368'),
     Worker('Гусев', 'Михаил', 'Владимирович', '+79675904368'),
     Worker('Мулин', 'Николай', 'Николаевич', '+79112283889'),
@@ -64,12 +61,12 @@ all_workers = Team([
     Worker('Огородников', 'Алексей', 'Юрьевич', '+79313196196')
 ])
 
-team_s1 = Team(all_workers.get_by_last_names(('Харитонов', 'Гусев', 'Мулин', 'Кушмылев')))
-team_s2 = Team(all_workers.get_by_last_names(('Каприца', 'Горнов')))
-team_v = Team(all_workers.get_by_last_names(('Подольский', 'Кокоев', 'Санжара')))
-team_vols = Team(all_workers.get_by_last_names(('Ильин', 'Ястребов', 'Огородников')))
-team_tk = Team(all_workers.get_by_last_names(('Огородников', 'Ястребов', 'Ильин')))
-team_askue = Team(all_workers.get_by_last_names(('Ястребов', 'Огородников', 'Ильин')))
+team_s1 = Team(Objects.S1, all_workers.get_by_last_names(('Харитонов', 'Гусев', 'Мулин', 'Кушмылев')))
+team_s2 = Team(Objects.S2, all_workers.get_by_last_names(('Каприца', 'Горнов')))
+team_v = Team('В1-В6', all_workers.get_by_last_names(('Подольский', 'Кокоев', 'Санжара')))
+team_vols = Team(Systems.VOLS, all_workers.get_by_last_names(('Ильин', 'Ястребов', 'Огородников')))
+team_tk = Team(Systems.TK, all_workers.get_by_last_names(('Огородников', 'Ястребов', 'Ильин')))
+team_askue = Team(Systems.ASKUE, all_workers.get_by_last_names(('Ястребов', 'Огородников', 'Ильин')))
 
 
 class WorkerStatus(Enum):
@@ -79,8 +76,9 @@ class WorkerStatus(Enum):
 
 
 class DutySchedule:
-    def __init__(self, worksheet: Worksheet):
+    def __init__(self, worksheet: Worksheet, _all_workers: Team):
         self.worksheet = worksheet
+        self.all_workers = _all_workers
         self.month, self.year = extract_month_and_year(worksheet.cell(1, 3).value)
         self.workers_rows = range(1, 50)
         self.workers_col = 2
@@ -117,7 +115,12 @@ class DutySchedule:
             if cell == 15:
                 return str(self.worksheet.cell(row, self.workers_col).value).replace('ё', 'е')
 
-
+    def get_performer(self, team: Team, target_date: date) -> Worker:
+        for worker in team.workers:
+            if self.get_worker_status(worker, target_date) == WorkerStatus.ON_WORK:
+                return worker
+        else:
+            return self.all_workers.get_by_last_name(self.get_duty_str(target_date))
 
 
 if __name__ == '__main__':

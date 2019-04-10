@@ -1,9 +1,11 @@
+from typing import Optional
+
 import openpyxl
-from openpyxl.workbook.workbook import Workbook, Worksheet
+
 from pre_processing import Job
 
 
-def work_details(job: Job) -> str:
+def work_details(job: Job) -> Optional[str]:
     workbook = openpyxl.load_workbook(r'.\input data\Detailed works.xlsx')
     sheet = workbook.active
     max_row = 1000

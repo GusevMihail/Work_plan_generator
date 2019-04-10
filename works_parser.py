@@ -1,13 +1,13 @@
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
-from typing import List
+from typing import List, Optional
 
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet import Worksheet
 
 import pre_processing
-from pre_processing import Systems, Objects
 from cell_styler import TableArea
+from pre_processing import Systems
 
 
 def xstr(cell_value):
@@ -111,7 +111,7 @@ class ParserAsu(AbstractParser):
                 raw_work_type = self.sheet.cell(i_row, i_col).value
                 if raw_work_type is not None:
                     raw_day = self.sheet.cell(self._data_area.first_row - 1, i_col).value
-                    one_line_work_type = xstr(raw_work_type).replace('\n',' ')
+                    one_line_work_type = xstr(raw_work_type).replace('\n', ' ')
                     for splitted_work_type in one_line_work_type.split(' '):
                         i_raw_data = RawData(raw_day, splitted_work_type, raw_place)
                         if i_raw_data not in self.raw_data:
@@ -123,12 +123,12 @@ class ParserVolsLikeSys(AbstractParser):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = None
-        self._place_in_header: str = None
+        self._place_in_header: Optional[str] = None
         self._work_type_col = 4
         self._data_first_col = 7
         self._data_last_col = None
         self._data_rows: List[int] = []
-        self._days_row: int = None
+        self._days_row: Optional[int] = None
 
     def _find_data_boundaries(self):
         max_table_row = 200
@@ -151,7 +151,7 @@ class ParserVolsLikeSys(AbstractParser):
                     column_visible = not self.sheet.column_dimensions[get_column_letter(col)].hidden
                     cell = xstr(self.sheet.cell(row, col).value)
                     next_cell = xstr(self.sheet.cell(row, col + 1).value)
-                    if column_visible and cell=='1' and next_cell == '2':
+                    if column_visible and cell == '1' and next_cell == '2':
                         self._days_row = row
                         self._data_first_col = col
                         exit_flag = True
@@ -204,9 +204,6 @@ class ParserVolsLikeSys(AbstractParser):
     def _extract_jobs(self):
         if self._data_last_col is None:
             self._find_data_boundaries()
-
-        raw_data = []
-
         for row in self._data_rows:
             work_type = self.sheet.cell(row, self._work_type_col).value
             place = self._find_place(row)
@@ -227,12 +224,12 @@ class ParserVols(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = Systems.VOLS  # unique value
-        self._place_in_header: str = None
+        self._place_in_header: Optional[str] = None
         self._work_type_col = 4
         self._data_first_col = 7  # unique value
         self._data_last_col = None
         self._data_rows: List[int] = []
-        self._days_row: int = None
+        self._days_row: Optional[int] = None
 
         self._find_data_boundaries()
         self._find_month_year()
@@ -244,12 +241,12 @@ class ParserTk(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = Systems.TK  # unique value
-        self._place_in_header: str = None
+        self._place_in_header: Optional[str] = None
         self._work_type_col = 4
         self._data_first_col = 7  # unique value
         self._data_last_col = None
         self._data_rows: List[int] = []
-        self._days_row: int = None
+        self._days_row: Optional[int] = None
 
         self._find_data_boundaries()
         self._find_month_year()
@@ -261,12 +258,12 @@ class ParserAskue(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = Systems.ASKUE  # unique value
-        self._place_in_header: str = None
+        self._place_in_header: Optional[str] = None
         self._work_type_col = 4
         self._data_first_col = 6  # unique value
         self._data_last_col = None
         self._data_rows: List[int] = []
-        self._days_row: int = None
+        self._days_row: Optional[int] = None
 
         self._find_data_boundaries()
         self._find_month_year()
@@ -278,12 +275,12 @@ class ParserTechReg(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = Systems.TECH_REG  # unique value
-        self._place_in_header: str = None
+        self._place_in_header: Optional[str] = None
         self._work_type_col = 6  # unique value
         self._data_first_col = 9  # unique value
         self._data_last_col = None
         self._data_rows: List[int] = []
-        self._days_row: int = None
+        self._days_row: Optional[int] = None
 
         self._find_data_boundaries()
         self._find_month_year()
