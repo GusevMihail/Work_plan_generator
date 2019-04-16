@@ -31,7 +31,7 @@ class WorkPlan:
         wb_template = openpyxl.load_workbook(filename)
         ws_template = wb_template.active
         self._first_col = 1
-        self._last_col = 9
+        self._last_col = 10
         self._first_data_row = 10
         self._current_row = self._first_data_row
         table_header = TableArea(first_row=8, last_row=9, first_col=self._first_col, last_col=self._last_col)
@@ -77,13 +77,21 @@ class WorkPlan:
         work_start = '9:00'
         work_end_col = 6
         work_end = '18:00'
-        worker_col = 7
+        department_head_col = 7
+        from duty_schedule import team_heads
+        from application import duty_schedules
+        for schedule in duty_schedules:
+            if (schedule.month, schedule.year) == (self.jobs[0].date.month, self.jobs[0].date.year):
+                department_head = schedule.get_head(team_heads, self.jobs[0].date)
+        worker_col = 8
         self._ws.cell(self._current_row, organization_col).value = organization
         self._ws.cell(self._current_row, system_col).value = job.system.value
         self._ws.cell(self._current_row, work_col).value = work
         self._ws.cell(self._current_row, place_col).value = job.place
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end
+        self._ws.cell(self._current_row, department_head_col).value = \
+            f'Отдел АСУ КЗС,\n{department_head}'
         self._ws.cell(self._current_row, worker_col).value = str(job.performer)
         self._current_row += 1
 

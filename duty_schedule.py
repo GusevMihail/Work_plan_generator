@@ -46,6 +46,8 @@ class Team:
 
 # workers directory
 all_workers = Team('Все сотрудники', [
+    Worker('Борисевич', 'Константин', 'Васильевич', '+79215943419'),
+    Worker('Добрицкий', 'Дмитрий', 'Александрович', '+79315347202'),
     Worker('Харитонов', 'Виктор', 'Яковлевич', '+79319642368'),
     Worker('Гусев', 'Михаил', 'Владимирович', '+79675904368'),
     Worker('Мулин', 'Николай', 'Николаевич', '+79112283889'),
@@ -61,6 +63,7 @@ all_workers = Team('Все сотрудники', [
     Worker('Огородников', 'Алексей', 'Юрьевич', '+79313196196')
 ])
 
+team_heads = Team('Руководители', all_workers.get_by_last_names(('Борисевич', 'Добрицкий')))
 team_s1 = Team(Objects.S1, all_workers.get_by_last_names(('Харитонов', 'Гусев', 'Мулин', 'Кушмылев')))
 team_s2 = Team(Objects.S2, all_workers.get_by_last_names(('Каприца', 'Горнов')))
 team_v = Team('В1-В6', all_workers.get_by_last_names(('Подольский', 'Кокоев', 'Санжара')))
@@ -121,6 +124,14 @@ class DutySchedule:
                 return worker
         else:
             return self.all_workers.get_by_last_name(self.get_duty_str(target_date))
+
+    def get_head(self, team: Team, target_date: date) -> Worker:
+        for worker in team.workers:
+            cell = self.worksheet.cell(self._find_worker_row(worker), self._date2col(target_date)).value
+            if (type(cell) is int) or (cell is None) or (cell == ''):
+                return worker
+        else:
+            return team.workers[0]
 
 
 if __name__ == '__main__':

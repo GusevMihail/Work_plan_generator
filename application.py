@@ -4,7 +4,6 @@ from typing import List, Tuple, Union, Any
 
 import openpyxl
 
-
 import table_generator
 import works_parser
 import duty_schedule
@@ -48,7 +47,6 @@ def process_duty_schedules(folder: str) -> Tuple[duty_schedule.DutySchedule]:
         return tuple(schedules)
 
 
-
 def make_xlsx_from_jobs(jobs_list):
     print('Генерация планов работ \n ...')
     jobs_list.sort(key=lambda x: (x.date, x.object.value, x.system.value, x.work_type))
@@ -60,6 +58,8 @@ def make_xlsx_from_jobs(jobs_list):
         table.make_plan()
         table.save_file()
 
+
+duty_schedules = process_duty_schedules(r'.\input data\Графики дежурств')
 
 if __name__ == "__main__":
     jobs = []

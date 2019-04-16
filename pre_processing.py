@@ -220,9 +220,9 @@ def parser_to_jobs(parser) -> List[Job]:
         else:
             team = team_v
 
-        from application import process_duty_schedules
+        from application import duty_schedules
 
-        for schedule in process_duty_schedules(r'.\input data\Графики дежурств'):
+        for schedule in duty_schedules:
             if (schedule.month, schedule.year) == (month, year):
                 job.performer = schedule.get_performer(team, job.date)
         jobs.append(job)
