@@ -19,8 +19,8 @@ class WorkPlan:
         self._thin_side = Side(style='thin', color='000000')
         self._thin_border = Border(left=self._thin_side, top=self._thin_side,
                                    right=self._thin_side, bottom=self._thin_side)
-        self._basic_font = Font(name='Times New Roman', size=10)
-        self._bold_font = Font(name='Times New Roman', size=11, b=True)
+        self._basic_font = Font(name='Times New Roman', size=8)
+        self._bold_font = Font(name='Times New Roman', size=8, b=True)
         self._align_center = Alignment(horizontal='center', vertical='center', wrap_text=True)
         self._align_left = Alignment(horizontal='left', vertical='center', wrap_text=True)
         self._wb = self._get_template(template_path)
@@ -87,7 +87,7 @@ class WorkPlan:
         self._ws.cell(self._current_row, organization_col).value = organization
         self._ws.cell(self._current_row, system_col).value = job.system.value
         self._ws.cell(self._current_row, work_col).value = work
-        self._ws.cell(self._current_row, place_col).value = job.place
+        self._ws.cell(self._current_row, place_col).value = str(job.place)
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end
         self._ws.cell(self._current_row, department_head_col).value = \

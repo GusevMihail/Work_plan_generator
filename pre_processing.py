@@ -160,7 +160,7 @@ def extract_place_and_object(raw_place: str):
     if search_obj:
         for obj in Objects:
             if 'В' + search_obj.group(1) in obj.value:
-                return 'В' + search_obj.group(1), obj
+                return obj.value, obj
 
     # find С1, С2 objects
     search_obj = re.search(r'(С\d)(.*)', raw_place)
