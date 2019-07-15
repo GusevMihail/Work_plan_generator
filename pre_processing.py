@@ -177,6 +177,7 @@ def find_system_by_sheet(sheet_name):
     sheet_names = {'АСУ ТП': Systems.ASU_TP,
                    'АСУ И': Systems.ASU_I,
                    'МОСТ': Systems.ASU_AM,
+                   'АМ': Systems.ASU_AM,
                    'ЛВС': Systems.LVS}
 
     for name, system in sheet_names.items():
