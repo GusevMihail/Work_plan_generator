@@ -3,7 +3,7 @@ from collections import namedtuple
 from typing import List, Optional
 
 from openpyxl.utils import get_column_letter
-from openpyxl.worksheet import Worksheet
+from openpyxl.worksheet.worksheet import Worksheet
 
 import pre_processing
 from cell_styler import TableArea

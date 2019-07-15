@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from openpyxl.styles import NamedStyle, Border, Alignment, PatternFill, Font
-from openpyxl.worksheet import Worksheet
+from openpyxl.worksheet.worksheet import Worksheet
 
 TableArea = namedtuple('table_area', 'first_row first_col last_row last_col')
 
