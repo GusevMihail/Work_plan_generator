@@ -5,7 +5,6 @@ from enum import Enum
 from typing import List, Optional
 
 
-
 class Systems(Enum):
     ASU_TP = 'АСУ ТП'
     ASU_I = 'АСУ И'
@@ -51,15 +50,15 @@ class Job:
 
     def __str__(self):
         return f'obj:{self._print_str(self.object, 35)}' \
-            f'place:{self._print_str(self.place, 40)}' \
-            f'work:{self._print_str(self.work_type, 10)}' \
-            f'date:{self._print_str(self.date, 15)}' \
-            f'sys:{self._print_str(self.system, 15)}' \
-            f'performer:{self._print_str(self.performer)}'
+               f'place:{self._print_str(self.place, 40)}' \
+               f'work:{self._print_str(self.work_type, 10)}' \
+               f'date:{self._print_str(self.date, 15)}' \
+               f'sys:{self._print_str(self.system, 15)}' \
+               f'performer:{self._print_str(self.performer)}'
 
     def __repr__(self):
         return f'obj:{self.object}; place:{self.place}; work:{self.work_type}; ' \
-            f'date:{self.date};  sys:{self.system}; performer:{self.performer}'
+               f'date:{self.date};  sys:{self.system}; performer:{self.performer}'
 
     def find_worker(self):
         group_s1 = ('Гусев Михаил Владимирович +79675904368',
@@ -100,7 +99,7 @@ def find_num_in_str(string: str) -> Optional[int]:
         return None
 
 
-def extract_month_and_year(raw_date: str):
+def extract_month(raw_date: str):
     month_names = {'январь': 1,
                    'февраль': 2,
                    'март': 3,
@@ -113,11 +112,25 @@ def extract_month_and_year(raw_date: str):
                    'октябрь': 10,
                    'ноябрь': 11,
                    'декабрь': 12}
-    month = None
     for m_name, m_num in month_names.items():
         if m_name in raw_date.lower():
-            month = m_num
-    year = int(re.findall(r'\d+', raw_date)[0])
+            return m_num
+    else:
+        raise Exception(f'Cant find month in str \'{raw_date}\'')
+
+
+def extract_year(raw_date: str):
+    raw_year = re.findall(r'\d+', raw_date)
+    if len(raw_year) > 0:
+        year = int(raw_year[0])
+    else:
+        raise Exception(f'Cant find year in str \'{raw_date}\'')
+    return year
+
+
+def extract_month_and_year(raw_date: str):
+    month = extract_month(raw_date)
+    year = extract_year(raw_date)
     # print(raw_date, month, year)  # debug
     return month, year
 

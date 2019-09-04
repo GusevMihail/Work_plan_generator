@@ -212,9 +212,6 @@ class ParserVolsLikeSys(AbstractParser):
                 if cell is not None:
                     day = xint(self.sheet.cell(self._days_row, col).value)
                     i_raw_data = RawData(day, work_type, place)
-                    # print(i_raw_data)  # debug
-                    if day == 122:
-                        print(f'! row{row}: {i_raw_data}')
                     if i_raw_data not in self.raw_data:
                         self.raw_data.append(i_raw_data)
 
@@ -286,3 +283,129 @@ class ParserTechReg(ParserVolsLikeSys):
         self._find_month_year()
         self._find_place_in_header()
         self._extract_jobs()
+
+
+class ParserSake(AbstractParser):
+
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self._place_in_header_row = 4
+        self._place_in_header_col = 39
+        self._place_in_data_area_col = 2
+        self._work_type_col = 9
+        self._data_first_col = 12
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: Optional[int] = None
+        self._year_row = 12
+        self._year_col = 2
+
+    def _find_data_boundaries(self):
+        max_table_row = 100
+        max_table_col = 60
+
+        # find data rows
+        for row in range(1, max_table_row):
+            cell = str(self.sheet.cell(row, self._work_type_col).value)
+            row_visible = not self.sheet.row_dimensions[row].hidden
+            if ('ТО' in cell) and not ('вид' in cell.lower()) and row_visible:
+                self._data_rows.append(row)
+        self._data_rows.sort()
+
+        # find days row and first data col
+        # exit_flag = False
+        # for row in range(1, max_table_row):
+        #     row_visible = not self.sheet.row_dimensions[row].hidden
+        #     if row_visible:
+        #         for col in range(self._work_type_col, 60):
+        #             column_visible = not self.sheet.column_dimensions[get_column_letter(col)].hidden
+        #             cell = xstr(self.sheet.cell(row, col).value)
+        #             next_cell = xstr(self.sheet.cell(row, col + 1).value)
+        #             if column_visible and cell == '1' and next_cell == '2':
+        #                 self._days_row = row
+        #                 self._data_first_col = col
+        #                 exit_flag = True
+        #                 break
+        #     if exit_flag:
+        #         break
+
+        # find data last column
+        for col in range(self._data_first_col, max_table_col):
+            cell_value = xint(self.sheet.cell(self._days_row, col).value)
+            column_hidden = self.sheet.column_dimensions[get_column_letter(col)].hidden
+            # print(f'[{col},{self._days_row}]={cell} ({type(cell)})')  # debug
+            if type(cell_value) is not int or column_hidden:
+                self._data_last_col = col - 1
+                break
+
+        # print(f'data boundaries: first col {self._data_first_col}, '
+        #       f'last col {self._data_last_col}, rows {self._data_rows}')  # debug
+
+    def _find_month_year(self):
+        if self._days_row is None:
+            self._find_data_boundaries()
+
+        month = self.sheet.cell(self._days_row - 1, self._data_first_col).value
+        from pre_processing import extract_year
+        year = extract_year(self.sheet.cell(self._year_row, self._year_col).value)
+        self.month_year = month + str(year)
+        # print(f'month_year = {self.month_year}')  # debug
+
+    def _find_place_in_header(self):
+        return str(self.sheet.cell(
+            self._place_in_header_row,
+            self._place_in_header_col
+        ).value)
+
+    def _find_place_in_data_area(self, data_row):
+        for row in range(data_row, self._days_row, -1):
+            cell = str(self.sheet.cell(row, self._place_in_data_area_col).value)
+            place, object_name = pre_processing.extract_place_and_object(cell)
+            if object_name != 'unknown':
+                return place
+        else:
+            raise Exception(f'Cant find place in data area for row {data_row},'
+                            f'sheet {self.sheet.title},'
+                            f'system {self.system}')
+
+    def _find_place(self, data_row) -> str:
+        place_in_header = self._find_place_in_header()
+        if 'С-1' in place_in_header or '10.4' in self.sheet.title:
+            return self._find_place_in_data_area(data_row)
+        else:
+            return place_in_header
+
+
+    def _extract_jobs(self):
+        if self._data_last_col is None:
+            self._find_data_boundaries()
+        for row in self._data_rows:
+            work_type = self.sheet.cell(row, self._work_type_col).value
+            place = self._find_place(row)
+            for col in range(self._data_first_col, self._data_last_col + 1):
+                cell = xstr(self.sheet.cell(row, col).value)
+                if cell is not None:
+                    day = xint(self.sheet.cell(self._days_row, col).value)
+                    i_raw_data = RawData(day, work_type, place)
+                    if i_raw_data not in self.raw_data:
+                        self.raw_data.append(i_raw_data)
+
+
+class ParserAskueSake(ParserSake):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = Systems.ASKUE
+        self._place_in_header_row = 4
+        self._place_in_header_col = 39
+        self._place_in_data_area_col = 2
+        self._work_type_col = 9
+        self._data_first_col = 12
+        self._days_row = 19
+        self._year_row = 12
+        self._year_col = 2
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
