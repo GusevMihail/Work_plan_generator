@@ -7,7 +7,7 @@
 /input data/Телеканал/
 /input data/Тех.учет/
 /input data/2019.rar
-/input data/~$
+
 .gitignore
 .idea/.gitignore
 .idea/Work plan generator.iml
@@ -17,5 +17,3 @@
 .idea/vcs.xml
 __pycache__/
 
-/input data/АИИСКУЭ/
-/input data/Графики дежурств/
