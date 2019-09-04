@@ -1,0 +1,19 @@
+/output data/
+/venv/
+/input data/АИИСКУЭ/
+/input data/АСУ/
+/input data/ВОЛС/
+/input data/Графики дежурств/
+/input data/Телеканал/
+/input data/Тех.учет/
+/input data/2019.rar
+/input data/~$
+.gitignore
+.idea/.gitignore
+.idea/Work plan generator.iml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+__pycache__/
+
