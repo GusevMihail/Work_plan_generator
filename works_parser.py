@@ -218,81 +218,6 @@ class ParserVolsLikeSys(AbstractParser):
                         self.raw_data.append(i_raw_data)
 
 
-class ParserVols(ParserVolsLikeSys):
-
-    def __init__(self, sheet: Worksheet):
-        super().__init__(sheet)
-        self.system = Systems.VOLS  # unique value
-        self._place_in_header: Optional[str] = None
-        self._work_type_col = 4
-        self._data_first_col = 7  # unique value
-        self._data_last_col = None
-        self._data_rows: List[int] = []
-        self._days_row: Optional[int] = None
-
-        self._find_data_boundaries()
-        self._find_month_year()
-        self._find_place_in_header()
-        self._extract_jobs()
-
-
-class ParserTk(ParserVolsLikeSys):
-    def __init__(self, sheet: Worksheet):
-        super().__init__(sheet)
-        self.system = Systems.TK  # unique value
-        self._place_in_header: Optional[str] = None
-        self._work_type_col = 4
-        self._data_first_col = 7  # unique value
-        self._data_last_col = None
-        self._data_rows: List[int] = []
-        self._days_row: Optional[int] = None
-
-        self._find_data_boundaries()
-        self._find_month_year()
-        self._find_place_in_header()
-        self._extract_jobs()
-
-    def _find_month_year(self):
-
-        date_cell = (3, 1)
-
-        self.month_year = self.sheet.cell(*date_cell).value
-        # print(f'month_year = {self.month_year}')  # debug
-
-class ParserAskue(ParserVolsLikeSys):
-    def __init__(self, sheet: Worksheet):
-        super().__init__(sheet)
-        self.system = Systems.ASKUE  # unique value
-        self._place_in_header: Optional[str] = None
-        self._work_type_col = 4
-        self._data_first_col = 6  # unique value
-        self._data_last_col = None
-        self._data_rows: List[int] = []
-        self._days_row: Optional[int] = None
-
-        self._find_data_boundaries()
-        self._find_month_year()
-        self._find_place_in_header()
-        self._extract_jobs()
-
-
-class ParserTechReg(ParserVolsLikeSys):
-    def __init__(self, sheet: Worksheet):
-        super().__init__(sheet)
-        self.system = Systems.TECH_REG  # unique value
-        self._place_in_header: Optional[str] = None
-        self._work_type_col = 6  # unique value
-        self._data_first_col = 9  # unique value
-        self._data_last_col = None
-        self._data_rows: List[int] = []
-        self._days_row: Optional[int] = None
-
-        self._find_data_boundaries()
-        self._find_month_year()
-        self._find_place_in_header()
-        self._extract_jobs()
-
-
 class ParserSake(AbstractParser):
 
     def __init__(self, sheet: Worksheet):
@@ -383,7 +308,6 @@ class ParserSake(AbstractParser):
         else:
             return place_in_header
 
-
     def _extract_jobs(self):
         if self._data_last_col is None:
             self._find_data_boundaries()
@@ -399,18 +323,85 @@ class ParserSake(AbstractParser):
                         self.raw_data.append(i_raw_data)
 
 
+class ParserVols(ParserVolsLikeSys):
+
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = Systems.VOLS  # unique value
+        self._place_in_header: Optional[str] = None
+        self._work_type_col = 4
+        self._data_first_col = 7  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: Optional[int] = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+
+class ParserTk(ParserVolsLikeSys):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = Systems.TK  # unique value
+        self._place_in_header: Optional[str] = None
+        self._work_type_col = 4
+        self._data_first_col = 7  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: Optional[int] = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+    def _find_month_year(self):
+
+        date_cell = (3, 1)
+
+        self.month_year = self.sheet.cell(*date_cell).value
+        # print(f'month_year = {self.month_year}')  # debug
+
+class ParserAskue(ParserVolsLikeSys):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = Systems.ASKUE  # unique value
+        self._place_in_header: Optional[str] = None
+        self._work_type_col = 4
+        self._data_first_col = 6  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: Optional[int] = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+
+class ParserTechReg(ParserVolsLikeSys):
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = Systems.TECH_REG  # unique value
+        self._place_in_header: Optional[str] = None
+        self._work_type_col = 6  # unique value
+        self._data_first_col = 9  # unique value
+        self._data_last_col = None
+        self._data_rows: List[int] = []
+        self._days_row: Optional[int] = None
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._find_place_in_header()
+        self._extract_jobs()
+
+
 class ParserAskueSake(ParserSake):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = Systems.ASKUE
-        # self._place_in_header_row = 4
-        # self._place_in_header_col = 39
-        # self._place_in_data_area_col = 2
-        # self._work_type_col = 9
-        # self._data_first_col = 12
-        # self._days_row = 19
-        # self._year_row = 12
-        # self._year_col = 2
         self._place_in_header_row = 4
         self._place_in_header_col = 39
         self._place_in_data_area_col = 2
