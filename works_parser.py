@@ -193,7 +193,9 @@ class ParserVolsLikeSys(AbstractParser):
             self._find_place_in_header()
 
         for row in range(data_row, self._days_row, -1):
-            cell = str(self.sheet.cell(row, self._data_first_col).value)
+            place_col = 1
+            # place_col = self._data_first_col
+            cell = str(self.sheet.cell(row, place_col).value)
             place, object_name = pre_processing.extract_place_and_object(cell)
             if object_name != 'unknown':
                 # print(f'{cell.ljust(40)} -> place {place}, obj {object_name}')
@@ -250,6 +252,12 @@ class ParserTk(ParserVolsLikeSys):
         self._find_place_in_header()
         self._extract_jobs()
 
+    def _find_month_year(self):
+
+        date_cell = (3, 1)
+
+        self.month_year = self.sheet.cell(*date_cell).value
+        # print(f'month_year = {self.month_year}')  # debug
 
 class ParserAskue(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
@@ -395,6 +403,14 @@ class ParserAskueSake(ParserSake):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
         self.system = Systems.ASKUE
+        # self._place_in_header_row = 4
+        # self._place_in_header_col = 39
+        # self._place_in_data_area_col = 2
+        # self._work_type_col = 9
+        # self._data_first_col = 12
+        # self._days_row = 19
+        # self._year_row = 12
+        # self._year_col = 2
         self._place_in_header_row = 4
         self._place_in_header_col = 39
         self._place_in_data_area_col = 2

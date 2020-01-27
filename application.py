@@ -24,6 +24,9 @@ def find_sheets_asu(wb: openpyxl.Workbook) -> Union[Tuple[openpyxl.workbook.work
 def find_sheets_vols(wb: openpyxl.Workbook) -> Union[Tuple[openpyxl.workbook.workbook.Worksheet], Any]:
     return tuple(sheet for sheet in wb.worksheets if 'ТО' in sheet.title and sheet.sheet_state == 'visible')
 
+def all_visible_sheets(wb: openpyxl.Workbook) -> Union[Tuple[openpyxl.workbook.workbook.Worksheet], Any]:
+    return tuple(sheet for sheet in wb.worksheets if 'ТО' in sheet.title and sheet.sheet_state == 'visible')
+
 
 def process_files(folder: str, find_sheets_function, parser_class) -> List[Job]:
     jobs_list = []
