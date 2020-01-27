@@ -144,6 +144,7 @@ def extract_place_and_object(raw_place: str):
                     ('Бронка',): ('ПС 223', Objects.PS223),
                     ('ПС', '223'): ('ПС 223', Objects.PS223),
                     ('ПС', '360'): ('ПС 360', Objects.PS360),
+                    ('Горская',): ('ПС 360', Objects.PS360),
                     ('ПС', '86'): ('ПС 86', Objects.S1),
                     ('Котлин',): ('Котлин', Objects.KOTLIN),
                     }

@@ -204,8 +204,6 @@ class ParserVolsLikeSys(AbstractParser):
             return self._place_in_header
 
     def _extract_jobs(self):
-        if self._data_last_col is None:
-            self._find_data_boundaries()
         for row in self._data_rows:
             work_type = self.sheet.cell(row, self._work_type_col).value
             place = self._find_place(row)
@@ -309,8 +307,6 @@ class ParserSake(AbstractParser):
             return place_in_header
 
     def _extract_jobs(self):
-        if self._data_last_col is None:
-            self._find_data_boundaries()
         for row in self._data_rows:
             work_type = self.sheet.cell(row, self._work_type_col).value
             place = self._find_place(row)
@@ -341,6 +337,42 @@ class ParserVols(ParserVolsLikeSys):
         self._extract_jobs()
 
 
+class ParserVols_v2(ParserSake):
+
+    def __init__(self, sheet: Worksheet):
+        super().__init__(sheet)
+        self.system = Systems.VOLS
+        self._place_in_header: Optional[str] = None
+        self._place_in_data_area_col = 2
+        self._work_type_col = 9
+        self._data_first_col = 12
+        self._days_row: Optional[int] = 19
+        self.date_cell = (12, 2)
+        self._data_rows: List[int] = []
+
+        self._find_data_boundaries()
+        self._find_month_year()
+        self._extract_jobs()
+
+    def _find_month_year(self):
+        self.month_year = self.sheet.cell(*self.date_cell).value
+        # print(f'month_year = {self.month_year}')  # debug
+
+    def _find_place_in_data_area(self, data_row):
+        for row in range(data_row, self._days_row, -1):
+            cell = str(self.sheet.cell(row, self._place_in_data_area_col).value)
+            place, object_name = pre_processing.extract_place_and_object(cell)
+            if object_name != 'unknown':
+                return place
+        else:
+            raise Exception(f'Cant find place in data area for row {data_row},'
+                            f'sheet {self.sheet.title},'
+                            f'system {self.system}')
+
+    def _find_place(self, data_row) -> str:
+        return self._find_place_in_data_area(data_row)
+
+
 class ParserTk(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
@@ -358,11 +390,11 @@ class ParserTk(ParserVolsLikeSys):
         self._extract_jobs()
 
     def _find_month_year(self):
-
         date_cell = (3, 1)
 
         self.month_year = self.sheet.cell(*date_cell).value
         # print(f'month_year = {self.month_year}')  # debug
+
 
 class ParserAskue(ParserVolsLikeSys):
     def __init__(self, sheet: Worksheet):
@@ -415,4 +447,3 @@ class ParserAskueSake(ParserSake):
         self._find_month_year()
         self._find_place_in_header()
         self._extract_jobs()
-
