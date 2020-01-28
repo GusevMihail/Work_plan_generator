@@ -83,7 +83,7 @@ class DutySchedule:
         self.worksheet = worksheet
         self.all_workers = _all_workers
         self.month, self.year = extract_month_and_year(worksheet.cell(1, 3).value)
-        self.workers_rows = range(1, 50)
+        self.workers_rows = range(4, 50)
         self.workers_col = 2
 
     @staticmethod
