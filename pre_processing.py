@@ -135,20 +135,21 @@ def extract_month_and_year(raw_date: str):
     return month, year
 
 
-def extract_place_and_object(raw_place: str):
-    places_names = {('ЗУ КЗС',): ('Здание управления КЗС', Objects.ZU),
-                    ('Здание управления',): ('Здание управления КЗС', Objects.ZU),
-                    ('АМ',): ('С2 АМ', Objects.S2),
-                    ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
-                    ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2),
-                    ('Бронка',): ('ПС 223', Objects.PS223),
-                    ('ПС', '223'): ('ПС 223', Objects.PS223),
-                    ('ПС', '360'): ('ПС 360', Objects.PS360),
-                    ('Горская',): ('ПС 360', Objects.PS360),
-                    ('ПС', '86'): ('ПС 86', Objects.S1),
-                    ('Котлин',): ('Котлин', Objects.KOTLIN),
-                    }
+places_names = {('ЗУ КЗС',): ('Здание управления КЗС', Objects.ZU),
+                ('Здание управления',): ('Здание управления КЗС', Objects.ZU),
+                ('АМ',): ('С2 АМ', Objects.S2),
+                ('Бронка',): ('Бронка', Objects.S1),
+                ('ПС', '223'): ('ПС 223', Objects.PS223),
+                ('ПС', '360'): ('ПС 360', Objects.PS360),
+                ('Горская',): ('Горская', Objects.S1),
+                ('ПС', '86'): ('ПС 86', Objects.S1),
+                ('Котлин',): ('Котлин', Objects.S1),
+                ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
+                ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2)
+                }
 
+
+def extract_place_and_object(raw_place: str):
     raw_place = raw_place.strip(' ,.\t\n')
     raw_place = raw_place.replace('c', 'с')  # Eng to Rus
     raw_place = raw_place.replace('C', 'С')  # Eng to Rus

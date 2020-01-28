@@ -25,7 +25,7 @@ def find_sheets_vols(wb: openpyxl.Workbook) -> Union[Tuple[openpyxl.workbook.wor
     return tuple(sheet for sheet in wb.worksheets if 'ТО' in sheet.title and sheet.sheet_state == 'visible')
 
 def all_visible_sheets(wb: openpyxl.Workbook) -> Union[Tuple[openpyxl.workbook.workbook.Worksheet], Any]:
-    return tuple(sheet for sheet in wb.worksheets if 'ТО' in sheet.title and sheet.sheet_state == 'visible')
+    return tuple(sheet for sheet in wb.worksheets if sheet.sheet_state == 'visible')
 
 
 def process_files(folder: str, find_sheets_function, parser_class) -> List[Job]:
@@ -67,10 +67,11 @@ duty_schedules = process_duty_schedules(r'.\input data\Графики дежур
 if __name__ == "__main__":
     jobs = []
     jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, works_parser.ParserAsu))
-    jobs.extend(process_files(r'.\input data\ВОЛС', find_sheets_vols, works_parser.ParserVols))
-    jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, works_parser.ParserTk))
-    jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, works_parser.ParserAskueSake))
-    jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, works_parser.ParserTechReg))
+    # jobs.extend(process_files(r'.\input data\ВОЛС', all_visible_sheets, works_parser.ParserVols_v2))
+    # jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, works_parser.ParserTk))
+    # jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, works_parser.ParserAskueSake))
+    # jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, works_parser.ParserTechReg))
+    jobs.extend(process_files(r'.\input data\1', all_visible_sheets, works_parser.ParserSake))
     print(f'Всего найдено работ: {len(jobs)}')
     make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
