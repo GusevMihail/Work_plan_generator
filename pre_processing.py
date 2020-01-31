@@ -26,9 +26,12 @@ class Objects(Enum):
     V5 = 'Водопропускное сооружение В5'
     V6 = 'Водопропускное сооружение В6'
     ZU = 'Здание управления КЗС'
-    PS360 = 'Горская'
+    PS360 = 'ПС 110/35/6кВ №360'
+    # PS360 = 'Горская'
+    PS86 = 'ПС 110/10/6кВ №86'
     PS223 = 'Бронка'
     KOTLIN = 'Котлин'
+
 
 
 class Job:
@@ -40,6 +43,8 @@ class Job:
         self.place: Optional[str] = None
         from duty_schedule import Worker
         self.performer: Optional[Worker] = None
+        self.tech_map: Optional[str] = None
+        self.equip_name: Optional[str] = None
 
     @staticmethod
     def _print_str(value, length=0):
@@ -140,10 +145,10 @@ places_names = {('ЗУ КЗС',): ('Здание управления КЗС', O
                 ('АМ',): ('С2 АМ', Objects.S2),
                 ('Бронка',): ('Бронка', Objects.S1),
                 ('ПС', '223'): ('ПС 223', Objects.PS223),
-                ('ПС', '360'): ('ПС 360', Objects.PS360),
+                ('ПС', '360'): ('ПС 110/35/6кВ №360', Objects.PS360),
                 ('Горская',): ('Горская', Objects.S1),
-                ('ПС', '86'): ('ПС 86', Objects.S1),
-                ('Котлин',): ('Котлин', Objects.S1),
+                ('ПС', '86'): ('ПС 110/10/6кВ №86', Objects.S1),
+                ('Котлин',): ('ПС Котлин', Objects.S1),
                 ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
                 ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2)
                 }
@@ -220,6 +225,8 @@ def parser_to_jobs(parser) -> List[Job]:
         job.work_type = filter_work_type(raw_job.work_type)
         job.date = datetime.date(year, month, raw_job.day)
         job.system = parser.system
+        job.tech_map = raw_job.tech_map
+        job.equip_name = raw_job.equip_name
 
         from duty_schedule import team_s1, team_s2, team_v, team_tk, team_vols, team_askue
 
@@ -241,5 +248,6 @@ def parser_to_jobs(parser) -> List[Job]:
         for schedule in duty_schedules:
             if (schedule.month, schedule.year) == (month, year):
                 job.performer = schedule.get_performer(team, job.date)
+
         jobs.append(job)
     return jobs

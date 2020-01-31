@@ -30,7 +30,7 @@ def xint(cell_value):
         return cell_value
 
 
-RawData = namedtuple('raw_data', 'day work_type place')
+RawData = namedtuple('raw_data', 'day work_type place tech_map equip_name')
 
 
 class AbstractParser(metaclass=ABCMeta):
@@ -40,6 +40,9 @@ class AbstractParser(metaclass=ABCMeta):
         self.month_year = None
         self.raw_data: List[RawData] = []
         self.system = None
+
+    def get_cell(self, row, col):
+        return self.sheet.cell(row, col).value
 
     @abstractmethod
     def _find_data_boundaries(self):
@@ -230,6 +233,8 @@ class ParserSake(AbstractParser):
         self.month_year = self._find_month_year()
         self._days_row: Optional[int] = 19
 
+        self._equip_name_col = 3
+        self._tech_map_col = 5
         self._work_type_col = 9
         self._data_first_col = 12
         self._data_last_col = None
@@ -279,26 +284,34 @@ class ParserSake(AbstractParser):
         #       f'last col {self._data_last_col}, rows {self._data_rows}')  # debug
 
     def _extract_jobs(self):
-        cell = self.sheet.cell(2, 40).value
-        many_places = '10.4.36' in cell or \
-                      '10.4.38' in cell  # графики по АИИСКУЭ\ВОЛС для С1\Бронка\Котлин
+        document_id = self.sheet.cell(2, 40).value
+        many_places = '10.4.36' in document_id or \
+                      '10.4.38' in document_id  # графики по АИИСКУЭ\ВОЛС для С1\Бронка\Котлин
         for row in self._data_rows:
-            work_type = self.sheet.cell(row, self._work_type_col).value
+            work_type = self.get_cell(row, self._work_type_col)
+            tech_map = self.get_cell(row, self._tech_map_col)
+            equip_name = self.get_cell(row, self._equip_name_col)
+
             if many_places:
                 place = self._find_place_in_data_area(row)
+                if document_id == '10.4.38' \
+                        and 'С1' in place:
+                    place = 'C1 ПС 110/10кВ'
             else:
                 place = self.place_in_header
+
             for col in range(self._data_first_col, self._data_last_col + 1):
-                cell = xstr(self.sheet.cell(row, col).value)
+                cell = xstr(self.get_cell(row, col))
                 if cell is not None:
-                    day = xint(self.sheet.cell(self._days_row, col).value)
-                    i_raw_data = RawData(day, work_type, place)
+                    day = xint(self.get_cell(self._days_row, col))
+
+                    i_raw_data = RawData(day, work_type, place, tech_map, equip_name)
                     if i_raw_data not in self.raw_data:
                         self.raw_data.append(i_raw_data)
 
     def _find_place_in_data_area(self, data_row):
         for row in range(data_row, self._days_row, -1):
-            cell = str(self.sheet.cell(row, self._place_in_data_area_col).value)
+            cell = str(self.get_cell(row, self._place_in_data_area_col))
             place, object_name = pre_processing.extract_place_and_object(cell)
             if object_name != 'unknown':
                 return place
