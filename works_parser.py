@@ -116,7 +116,8 @@ class ParserAsu(AbstractParser):
                     raw_day = self.sheet.cell(self._data_area.first_row - 1, i_col).value
                     one_line_work_type = xstr(raw_work_type).replace('\n', ' ')
                     for splitted_work_type in one_line_work_type.split(' '):
-                        i_raw_data = RawData(raw_day, splitted_work_type, raw_place)
+                        i_raw_data = RawData(raw_day, splitted_work_type, raw_place, '',
+                                             '')  # старый парсер, работа с техкартой и оборудованием не поддерживается
                         if i_raw_data not in self.raw_data:
                             self.raw_data.append(i_raw_data)
 
@@ -224,10 +225,10 @@ class ParserSake(AbstractParser):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
 
-        cell_system = self.sheet.cell(14, 2).value
+        cell_system = self.get_cell(14, 2)
         self.system = self.str_to_system(cell_system)
 
-        self.place_in_header = self.sheet.cell(4, 40).value
+        self.place_in_header = self.get_cell(4, 40)
         self._place_in_data_area_col = 2
 
         self.month_year = self._find_month_year()
@@ -240,6 +241,9 @@ class ParserSake(AbstractParser):
         self._data_last_col = None
         self._data_rows: List[int] = []
 
+        self.document_id = self.get_cell(2, 40)
+        self._get_is_multiplace()
+
         self._find_data_boundaries()
         self._extract_jobs()
 
@@ -251,7 +255,11 @@ class ParserSake(AbstractParser):
         aliases = {'АИИСКУЭ': Systems.ASKUE,
                    'учет': Systems.TECH_REG,
                    'М2': Systems.TK,
-                   'ВОЛС': Systems.VOLS}
+                   'ВОЛС': Systems.VOLS,
+                   'ЛВС': Systems.LVS,
+                   'АСУ ТП': Systems.ASU_TP,
+                   'АСУ И': Systems.ASU_I,
+                   'мост': Systems.ASU_AM}
 
         for alias, system in aliases.items():
             if alias in sys_str:
@@ -260,12 +268,13 @@ class ParserSake(AbstractParser):
             return None
 
     def _find_data_boundaries(self):
-        max_table_row = 100
+        first_table_row = 22
+        max_table_row = 120
         max_table_col = 50
 
         # find data rows
-        for row in range(1, max_table_row):
-            cell = str(self.sheet.cell(row, self._work_type_col).value)
+        for row in range(first_table_row, max_table_row):
+            cell = str(self.get_cell(row, self._work_type_col))
             row_visible = not self.sheet.row_dimensions[row].hidden
             if ('ТО' in cell) and not ('вид' in cell.lower()) and row_visible:
                 self._data_rows.append(row)
@@ -273,7 +282,7 @@ class ParserSake(AbstractParser):
 
         # find data last column
         for col in range(self._data_first_col, max_table_col):
-            cell_value = xint(self.sheet.cell(self._days_row, col).value)
+            cell_value = xint(self.get_cell(self._days_row, col))
             column_hidden = self.sheet.column_dimensions[get_column_letter(col)].hidden
             # print(f'[{col},{self._days_row}]={cell} ({type(cell)})')  # debug
             if type(cell_value) is not int or column_hidden:
@@ -283,18 +292,24 @@ class ParserSake(AbstractParser):
         # print(f'data boundaries: first col {self._data_first_col}, '
         #       f'last col {self._data_last_col}, rows {self._data_rows}')  # debug
 
+    def _get_is_multiplace(self):
+        multiplace_documents = ('10.4.36',  # АИИСКУЭ для С1\Бронка\Котлин
+                                '10.4.38',  # ВОЛС для С1\Бронка\Котлин
+                                '14.0.107',  # АСУ ТП
+                                '14.0.108',  # АСУ И
+                                '2.1.109',  # АСУ АМ
+                                '14.0.110')  # ЛВС
+        self.is_multiplace = self.document_id in multiplace_documents
+
     def _extract_jobs(self):
-        document_id = self.sheet.cell(2, 40).value
-        many_places = '10.4.36' in document_id or \
-                      '10.4.38' in document_id  # графики по АИИСКУЭ\ВОЛС для С1\Бронка\Котлин
         for row in self._data_rows:
             work_type = self.get_cell(row, self._work_type_col)
             tech_map = self.get_cell(row, self._tech_map_col)
             equip_name = self.get_cell(row, self._equip_name_col)
 
-            if many_places:
+            if self.is_multiplace:
                 place = self._find_place_in_data_area(row)
-                if document_id == '10.4.38' \
+                if self.document_id == '10.4.38' \
                         and 'С1' in place:
                     place = 'C1 ПС 110/10кВ'
             else:
@@ -316,7 +331,7 @@ class ParserSake(AbstractParser):
             if object_name != 'unknown':
                 return place
         else:
-            raise Exception(f'Cant find place in data area for row {data_row},'
+            raise Exception(f'Can\'t find place in data area for row {data_row},'
                             f'sheet {self.sheet.title},'
                             f'system {self.system}')
 

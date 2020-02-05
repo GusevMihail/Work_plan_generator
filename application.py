@@ -67,7 +67,8 @@ duty_schedules = process_duty_schedules(r'.\input data\Графики дежур
 
 if __name__ == "__main__":
     jobs = []
-    jobs.extend(process_files(r'.\input data\1', all_visible_sheets, works_parser.ParserSake))
+    # jobs.extend(process_files(r'.\input data\1', all_visible_sheets, works_parser.ParserSake))
+    jobs.extend(process_files(r'.\input data\2', all_visible_sheets, works_parser.ParserSake))  # ASU
     # jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, works_parser.ParserAsu))
     # jobs.extend(process_files(r'.\input data\ВОЛС', all_visible_sheets, works_parser.ParserVols_v2))
     # jobs.extend(process_files(r'.\input data\Телеканал', find_sheets_vols, works_parser.ParserTk))
@@ -76,8 +77,8 @@ if __name__ == "__main__":
     print(f'Всего найдено работ: {len(jobs)}')
     # make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
-    print(f'Всего найдено работ: {len(jobs)}')
+    # print(f'Всего найдено работ: {len(jobs)}')
     input()
 
-    # for j in jobs:
-    #     print(j)
+    for j in jobs:
+        print(j)
