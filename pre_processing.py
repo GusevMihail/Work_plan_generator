@@ -33,7 +33,6 @@ class Objects(Enum):
     KOTLIN = 'Котлин'
 
 
-
 class Job:
     def __init__(self):
         self.date: Optional[datetime.date] = None
@@ -140,21 +139,24 @@ def extract_month_and_year(raw_date: str):
     return month, year
 
 
-places_names = {('ЗУ КЗС',): ('Здание управления КЗС', Objects.ZU),
-                ('Здание управления',): ('Здание управления КЗС', Objects.ZU),
-                ('АМ',): ('С2 АМ', Objects.S2),
-                ('Бронка',): ('Бронка', Objects.S1),
-                ('ПС', '223'): ('ПС 223', Objects.PS223),
-                ('ПС', '360'): ('ПС 110/35/6кВ №360', Objects.PS360),
-                ('Горская',): ('Горская', Objects.S1),
-                ('ПС', '86'): ('ПС 110/10/6кВ №86', Objects.S1),
-                ('Котлин',): ('ПС Котлин', Objects.S1),
-                ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
-                ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2)
-                }
-
-
 def extract_place_and_object(raw_place: str):
+    places_names = {('ЗУ КЗС',): ('Здание управления КЗС', Objects.ZU),
+                    ('Здание управления',): ('Здание управления КЗС', Objects.ZU),
+                    ('АМ',): ('С2 АМ', Objects.S2),
+                    ('Бронка',): ('Бронка', Objects.S1),
+                    ('ПС', '223'): ('ПС 223', Objects.PS223),
+                    ('ПС', '360'): ('ПС 110/35/6кВ №360', Objects.PS360),
+                    ('Горская',): ('Горская', Objects.S1),
+                    ('ПС', '86'): ('ПС 110/10/6кВ №86', Objects.S1),
+                    ('Котлин',): ('ПС Котлин', Objects.S1),
+                    ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
+                    ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2),
+                    ('Южная', 'С1'): ('С1 Юг', Objects.S1),
+                    ('Северная', 'С1'): ('С1 Север', Objects.S1),
+                    ('Южная', 'С2'): ('С2 Юг', Objects.S2),
+                    ('Северная', 'С2'): ('С2 Север', Objects.S2)
+                    }
+
     raw_place = raw_place.strip(' ,.\t\n')
     raw_place = raw_place.replace('c', 'с')  # Eng to Rus
     raw_place = raw_place.replace('C', 'С')  # Eng to Rus
