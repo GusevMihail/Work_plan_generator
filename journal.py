@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Union
+from typing import List, Union, Type
 
 import pandas as pd
 
@@ -59,3 +59,17 @@ class JournalASU(Journal):
         journal.performer = journal.performer.apply(lambda w: w.last_name)
 
         self.journal = journal
+
+
+def batch_journal_generator(jobs_df: pd.DataFrame, journal_class: Type[Journal], config: dict, return_journals=True,
+                            save_journals=True):
+    journals = {}
+    for name, conf in config.items():
+        sys, obj, place_filter = conf
+        j = journal_class(jobs_df)
+        j.make_journal(sys, obj, place_filter)
+        if return_journals:
+            journals[name] = j
+        if save_journals:
+            j.save_journal(name)
+        return journals
