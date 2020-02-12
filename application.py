@@ -51,14 +51,18 @@ def process_duty_schedules(folder: str) -> Tuple[duty_schedule.DutySchedule]:
         return tuple(schedules)
 
 
-def make_xlsx_from_jobs(jobs_list):
+def make_xlsx_from_jobs(jobs_list: List[Job]):
     print('Генерация планов работ \n ...')
     jobs_list.sort(key=lambda x: (x.date, x.object.value, x.system.value, x.work_type))
-    jobs_by_days = groupby(jobs, key=lambda x: x.date)
-    for job in jobs_by_days:
+
+    jobs_by_days = groupby(jobs_list, key=lambda x: x.date)
+    for day_jobs in jobs_by_days:
         template_filename = r'.\input data\Template.xlsx'
-        day_job = list(job[1])
-        table = table_generator.WorkPlan(day_job, template_filename)
+        day_jobs = list(day_jobs[1])  # распаковка результата группировки
+        # отбрасывание элементов списка, не уникальных по комбинации некоторых полей.
+        day_jobs = list({(j.object, j.place, j.system, j.work_type): j for j in day_jobs}.values())
+
+        table = table_generator.WorkPlan(day_jobs, template_filename)
         table.make_plan()
         table.save_file()
 
@@ -67,7 +71,7 @@ duty_schedules = process_duty_schedules(r'.\input data\Графики дежур
 
 if __name__ == "__main__":
     jobs = []
-    # jobs.extend(process_files(r'.\input data\1', all_visible_sheets, works_parser.ParserSake))
+    jobs.extend(process_files(r'.\input data\1', all_visible_sheets, works_parser.ParserSake))  # other systems
     jobs.extend(process_files(r'.\input data\2', all_visible_sheets, works_parser.ParserSake))  # ASU
     # jobs.extend(process_files(r'.\input data\АСУ', find_sheets_asu, works_parser.ParserAsu))
     # jobs.extend(process_files(r'.\input data\ВОЛС', all_visible_sheets, works_parser.ParserVols_v2))
@@ -75,7 +79,7 @@ if __name__ == "__main__":
     # jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, works_parser.ParserAskueSake))
     # jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, works_parser.ParserTechReg))
     print(f'Всего найдено работ: {len(jobs)}')
-    # make_xlsx_from_jobs(jobs)
+    make_xlsx_from_jobs(jobs)
     print('Генерация успешно завершена')
     # print(f'Всего найдено работ: {len(jobs)}')
     input()

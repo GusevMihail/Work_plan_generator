@@ -70,7 +70,8 @@ class JournalASU(Journal):
         journal = journal[journal.system == sys] \
             .drop(['system', 'object'], axis=1) \
             .reindex(columns=['date', 'place', 'work_type', 'tech_map', 'performer']) \
-            .sort_values(by=['date', 'place', 'work_type'])
+            .sort_values(by=['date', 'place', 'work_type']) \
+            .drop_duplicates()
         if place_filter:
             journal = journal[journal.place.str.contains(place_filter)]
         journal.performer = journal.performer.apply(lambda w: w.last_name)
