@@ -43,6 +43,8 @@ def process_attachement(msg, files):  # Функция по обработке �
             dir = os.listdir(f)  # Получаем список файлов в папке
             for file in dir:  # Перебираем все файлы и...
                 attach_file(msg, f + "/" + file)  # ...добавляем каждый файл к сообщению
+        else:
+            raise Exception(f'File or directory not found: {f}')
 
 
 def attach_file(msg, filepath):  # Функция по добавлению конкретного файла к сообщению
@@ -73,9 +75,37 @@ def attach_file(msg, filepath):  # Функция по добавлению ко
     msg.attach(file)  # Присоединяем файл к сообщению
 
 
-# Использование функции send_email()
-addr_to = "gusev.mihail.34@gmail.com"  # Получатель
-files = [r'./output data/journals/20 02 АИИСКУЕ.xlsx'  # Список файлов, если вложений нет, то files=[]
-         ]  # Если нужно отправить все файлы из заданной папки, нужно указать её
+def send_journals(batch: dict, mail_subj: str, add_month_to_subj: bool = True, subj_suffix: str = '',
+                  mail_text: str = '', print_log=True, test_mod=False):
+    from application import get_xlsx_files
+    import config_email
+    folder = r'./output data/journals/'
+    all_journals = tuple(get_xlsx_files(folder))
+    mail_subj = f'{mail_subj} {get_month_str(all_journals[0]) if add_month_to_subj else ""} {subj_suffix}'
 
-send_email(addr_to, "Тема сообщения 2", "Текст сообщения", files)
+    if test_mod:
+        print('Test mode: emails will not sending')
+    if print_log:
+        print(f'email subject: {mail_subj}')
+
+    for addr, journals_aliases in config_email.batch_sending_journals.items():
+        files_to_send = []
+        for file_name in all_journals:
+            for j in journals_aliases:
+                if j in file_name:
+                    files_to_send.append(folder + file_name)
+                    break
+
+        if print_log:
+            print(f'{addr.ljust(20)} {files_to_send}')
+        if not test_mod:
+            send_email(addr, mail_subj, mail_text, files_to_send)
+
+
+def get_month_str(attachment_name: str) -> str:
+    from datetime import datetime
+    import locale
+    locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
+    date_string = attachment_name.split('/')[-1][0:5]  # + ' 01'
+    month = datetime.strptime(date_string, '%y %m').strftime('%B')
+    return month
