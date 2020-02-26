@@ -228,8 +228,9 @@ class ParserSake(AbstractParser):
         cell_system = self.get_cell(14, 2)
         self.system = self.str_to_system(cell_system)
 
-        self.place_in_header = self.get_cell(4, 40)
         self._place_in_data_area_col = 2
+        self._place_in_header_row = 4
+        self._document_id_row = 2
 
         self.month_year = self._find_month_year()
         self._days_row: Optional[int] = 19
@@ -241,7 +242,8 @@ class ParserSake(AbstractParser):
         self._data_last_col = None
         self._data_rows: List[int] = []
 
-        self.document_id = self.get_cell(2, 40)
+        # self.document_id = self.get_cell(2, 40)
+        self._find_place_in_header()
         self._get_is_multiplace()
 
         self._find_data_boundaries()
@@ -309,9 +311,7 @@ class ParserSake(AbstractParser):
 
             if self.is_multiplace:
                 place = self._find_place_in_data_area(row)
-                if self.document_id == '10.4.38' \
-                        and 'С1' in place:
-                    place = 'C1 ПС 110/10кВ'
+
             else:
                 place = self.place_in_header
 
@@ -324,10 +324,34 @@ class ParserSake(AbstractParser):
                     if i_raw_data not in self.raw_data:
                         self.raw_data.append(i_raw_data)
 
+    def _find_place_in_header(self):
+        columns_to_search = range(30, 55)
+        template = 'Объект имущества'
+        for col in columns_to_search:
+            cell = self.get_cell(self._place_in_header_row, col)
+            if cell and (template in cell):
+                self.place_in_header = self.get_cell(self._place_in_header_row, col + 4)
+                self.document_id = self.get_cell(self._document_id_row, col + 4)
+                break
+        else:
+            raise Exception(f'Cant find place in header')
+
     def _find_place_in_data_area(self, data_row):
         for row in range(data_row, self._days_row, -1):
             cell = str(self.get_cell(row, self._place_in_data_area_col))
             place, object_name = pre_processing.extract_place_and_object(cell)
+
+            if self.document_id == '10.4.38' and 'С1' in place:
+                place = 'C1 ПС 110/10кВ'
+            if self.document_id in ('14.0.107',  # АСУ ТП
+                                    '14.0.108',  # АСУ И
+                                    '2.1.109',  # АСУ АМ
+                                    '14.0.110'  # ЛВС
+                                    ) \
+                    and 'Котлин' in place:
+                place = pre_processing.Objects.ZU.value
+                object_name = pre_processing.Objects.ZU
+
             if object_name != 'unknown':
                 return place
         else:

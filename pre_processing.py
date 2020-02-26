@@ -192,7 +192,7 @@ def extract_place_and_object(raw_place: str):
             if search_obj.group(1) in obj.value:
                 return ''.join(search_obj.groups()), obj
 
-    # print(f'extract_place_and_object: {raw_place} - нет совпадений с шаблоном')  # debug
+    # raise Exception(f'extract_place_and_object: {raw_place} - нет совпадений с шаблоном')
     return raw_place, 'unknown'
 
 
