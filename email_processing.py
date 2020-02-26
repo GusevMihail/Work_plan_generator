@@ -88,6 +88,8 @@ def send_journals(batch: dict, mail_subj: str, add_month_to_subj: bool = True, s
     if print_log:
         print(f'email subject: {mail_subj}')
 
+    # input('send emails?')
+
     for addr, journals_aliases in config_email.batch_sending_journals.items():
         files_to_send = []
         for file_name in all_journals:
