@@ -36,7 +36,7 @@ batch_ASU_journals = {'АСУ ТП С1 Север': JournalGeneratorConfig(Syste
                       'АИИСКУЕ 2': JournalGeneratorConfig(Systems.ASKUE, None, None),
                       'Тех Учет 2': JournalGeneratorConfig(Systems.TECH_REG, None, None),
 
-                      'ЛВС': JournalGeneratorConfig(Systems.LVS, None, None),
+                      # 'ЛВС 2': JournalGeneratorConfig(Systems.LVS, None, None),  # эта версия не подходит
                       'ВОЛС': JournalGeneratorConfig(Systems.VOLS, None, None),
                       'ТК М2': JournalGeneratorConfig(Systems.TK, None, None),
                       }
@@ -45,5 +45,6 @@ default_header_ASKUE = (
     ('Дата', 10), ('Место', 30), ('Оборудование', 30), ('Тип', 7), ('Тех. карта', 32), ('Исполнитель', 15))
 
 batch_ASKUE_journals = {'АИИСКУЕ': JournalGeneratorConfig(Systems.ASKUE, None, None),
-                        'Тех Учет': JournalGeneratorConfig(Systems.TECH_REG, None, None)
+                        'Тех Учет': JournalGeneratorConfig(Systems.TECH_REG, None, None),
+                        'ЛВС': JournalGeneratorConfig(Systems.LVS, None, None)
                         }

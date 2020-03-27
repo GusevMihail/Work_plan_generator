@@ -225,15 +225,9 @@ class ParserSake(AbstractParser):
     def __init__(self, sheet: Worksheet):
         super().__init__(sheet)
 
-        cell_system = self.get_cell(14, 2)
-        self.system = self.str_to_system(cell_system)
-
         self._place_in_data_area_col = 2
         self._place_in_header_row = 4
         self._document_id_row = 2
-
-        self.month_year = self._find_month_year()
-        self._days_row: Optional[int] = 19
 
         self._equip_name_col = 3
         self._tech_map_col = 5
@@ -241,6 +235,15 @@ class ParserSake(AbstractParser):
         self._data_first_col = 12
         self._data_last_col = None
         self._data_rows: List[int] = []
+        self._days_row: Optional[int] = 19
+        self._date_col = 2
+        self._date_row = None
+        self._sys_row = None
+
+        self.month_year = self._find_month_year()
+
+        cell_system = self.get_cell(self._sys_row, self._date_col)  # system and date has same column number
+        self.system = self.str_to_system(cell_system)
 
         # self.document_id = self.get_cell(2, 40)
         self._find_place_in_header()
@@ -250,7 +253,12 @@ class ParserSake(AbstractParser):
         self._extract_jobs()
 
     def _find_month_year(self):
-        return self.sheet.cell(12, 2).value
+        for row in range(10, 25):
+            cell = self.get_cell(row, self._date_col)
+            if cell:
+                self._date_row = row
+                self._sys_row = row + 2
+                return cell
 
     @staticmethod
     def str_to_system(sys_str: str):

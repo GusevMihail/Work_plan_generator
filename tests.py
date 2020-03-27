@@ -447,6 +447,5 @@ class TestDutySchedule(unittest.TestCase):
                                                      datetime.date(2019, 2, 8)).last_name, 'Гусев')
 
 
-
 if __name__ == '__main__':
     unittest.main()
