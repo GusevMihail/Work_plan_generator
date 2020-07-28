@@ -31,7 +31,7 @@ class Journal(metaclass=ABCMeta):
         if self.journal is None:
             raise ValueError('make journal before save it!')
         else:
-            full_file_name = folder + self.df.date[0].strftime('%y %m ') + file_name + '.xlsx'
+            full_file_name = folder + self.df.date[0].strftime('%Y %m ') + file_name + '.xlsx'
             sheet_name = 'Sheet1'
             if header == 'default':
                 header = self.default_header

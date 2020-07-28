@@ -18,3 +18,5 @@ batch_sending_journals = {'EKushmilev@bcc.ru': ('АСУ И С1',),
                           'AYastrebov@bcc.ru': ('Тех',),
                           'AOgorodnikov@bcc.ru': ('ТК',)
                           }
+
+batch_sending_plans = {'kzs.asu.504@gmail.com': ('',)}

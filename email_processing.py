@@ -27,6 +27,7 @@ def send_email(addr_to, msg_subj, msg_text, files):
 
     # ======== Этот блок настраивается для каждого почтового провайдера отдельно ===============================================
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)  # Создаем объект SMTP
+    server.ehlo()
     # server.starttls()                                      # Начинаем шифрованный обмен по TLS
     # server.set_debuglevel(True)                            # Включаем режим отладки, если не нужен - можно закомментировать
     server.login(addr_from, password)  # Получаем доступ
@@ -79,8 +80,8 @@ def send_journals(batch: dict, mail_subj: str, add_month_to_subj: bool = True, s
                   mail_text: str = '', print_log=True, test_mod=False):
     from application import get_xlsx_files
     import config_email
-    folder = r'./output data/journals/'
-    all_journals = tuple(get_xlsx_files(folder))
+    # folder = r'./output data/journals/'
+    all_journals = tuple(get_xlsx_files(attachment_folder))
     mail_subj = f'{mail_subj} {get_month_str(all_journals[0]) if add_month_to_subj else ""} {subj_suffix}'
 
     if test_mod:
@@ -90,12 +91,12 @@ def send_journals(batch: dict, mail_subj: str, add_month_to_subj: bool = True, s
 
     # input('send emails?')
 
-    for addr, journals_aliases in config_email.batch_sending_journals.items():
+    for addr, journals_aliases in batch.items():
         files_to_send = []
         for file_name in all_journals:
             for j in journals_aliases:
                 if j in file_name:
-                    files_to_send.append(folder + file_name)
+                    files_to_send.append(attachment_folder + file_name)
                     break
 
         if print_log:
@@ -108,6 +109,6 @@ def get_month_str(attachment_name: str) -> str:
     from datetime import datetime
     import locale
     locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-    date_string = attachment_name.split('/')[-1][0:5]  # + ' 01'
-    month = datetime.strptime(date_string, '%y %m').strftime('%B')
+    date_string = attachment_name.split('/')[-1][0:7]  # + ' 01'
+    month = datetime.strptime(date_string, '%Y %m').strftime('%B')
     return month
