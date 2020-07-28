@@ -76,7 +76,8 @@ def attach_file(msg, filepath):  # Функция по добавлению ко
     msg.attach(file)  # Присоединяем файл к сообщению
 
 
-def send_journals(batch: dict, mail_subj: str, add_month_to_subj: bool = True, subj_suffix: str = '',
+def send_journals(batch: dict, attachment_folder: str, mail_subj: str, add_month_to_subj: bool = True,
+                  subj_suffix: str = '',
                   mail_text: str = '', print_log=True, test_mod=False):
     from application import get_xlsx_files
     import config_email
