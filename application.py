@@ -33,6 +33,7 @@ def process_files(folder: str, find_sheets_function, parser_class) -> List[Job]:
     jobs_list = []
     print(f'folder: {folder}')
     for file in get_xlsx_files(folder):
+        print(f' - {file}')
         file_path = folder + '\\' + str(file)
         workbook = openpyxl.load_workbook(file_path)
         sheets = find_sheets_function(workbook)
@@ -52,7 +53,7 @@ def process_duty_schedules(folder: str) -> Tuple[duty_schedule.DutySchedule]:
 
 
 def make_xlsx_from_jobs(jobs_list: List[Job]):
-    print('Генерация планов работ \n ...')
+    print('Генерация планов работ')
     jobs_list.sort(key=lambda x: (x.date, x.object.value, x.system.value, x.work_type))
 
     jobs_by_days = groupby(jobs_list, key=lambda x: x.date)

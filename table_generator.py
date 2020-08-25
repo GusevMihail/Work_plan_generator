@@ -103,7 +103,9 @@ class WorkPlan:
                 self._write_work_row(job)
 
     def save_file(self):
-        self._wb.save(f'.\\output data\\plans\\{self.jobs[0].date}.xlsx')
+        filename = f'.\\output data\\plans\\{self.jobs[0].date.strftime("%Y %m %d")}.xlsx'
+        print(f' - {filename}')
+        self._wb.save(filename)
         self._wb.close()
 
 # if __name__ == '__main__':
