@@ -7,8 +7,7 @@ script_email_password = 'lxrhxzgwqurnvyqo'
 #                           'gusev.mihail.34@gmail.com': ('С2', 'АМ', 'ЗУ')
 #                           }
 
-batch_sending_journals = {'EKushmilev@bcc.ru': ('АСУ И С1',),
-                          'NMulin@bcc.ru': ('АСУ ТП С1',),
+batch_sending_journals = {'NMulin@bcc.ru': ('АСУ ТП С1', 'АСУ И С1'),
                           # 'AKapritsa@bcc.ru': ('С2', 'АМ', 'ЗУ'),
                           'VMakarov@bcc.ru': ('С2', 'АМ', 'ЗУ'),
                           'MKokoev@bcc.ru': ('В1', 'В2', 'В3', 'В4', 'В5', 'В6'),

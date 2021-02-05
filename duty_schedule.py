@@ -51,7 +51,6 @@ all_workers = Team('Все сотрудники', [
     Worker('Харитонов', 'Виктор', 'Яковлевич', '+79319642368'),
     Worker('Гусев', 'Михаил', 'Владимирович', '+79675904368'),
     Worker('Мулин', 'Николай', 'Николаевич', '+79112283889'),
-    Worker('Кушмылев', 'Евгений', 'Павлович', '+79819134737'),
     Worker('Каприца', 'Анатолий', 'Евгеньевич', '+79046315018'),
     Worker('Макаров', 'Виктор', 'Викторович', '+79312089129'),
     Worker('Горнов', 'Александр', 'Серафимович', '+79111314015'),
@@ -64,7 +63,7 @@ all_workers = Team('Все сотрудники', [
 ])
 
 team_heads = Team('Руководители', all_workers.get_by_last_names(('Борисевич', 'Добрицкий')))
-team_s1 = Team(Objects.S1, all_workers.get_by_last_names(('Харитонов', 'Гусев', 'Мулин', 'Кушмылев')))
+team_s1 = Team(Objects.S1, all_workers.get_by_last_names(('Харитонов', 'Гусев', 'Мулин')))
 team_s2 = Team(Objects.S2, all_workers.get_by_last_names(('Каприца', 'Горнов')))
 team_v = Team('В1-В6', all_workers.get_by_last_names(('Подольский', 'Кокоев', 'Санжара')))
 team_vols = Team(Systems.VOLS, all_workers.get_by_last_names(('Ильин', 'Ястребов', 'Огородников')))
