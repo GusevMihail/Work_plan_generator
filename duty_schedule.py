@@ -56,7 +56,6 @@ all_workers = Team('Все сотрудники', [
     Worker('Горнов', 'Александр', 'Серафимович', '+79111314015'),
     Worker('Подольский', 'Андрей', 'Вениаминович', '+79312531066'),
     Worker('Кокоев', 'Михаил', 'Николаевич', '+79216441993'),
-    Worker('Санжара', 'Владимир', 'Александрович', '+79819629285'),
     Worker('Ильин', 'Андрей', 'Владимирович', '+79219303652'),
     Worker('Ястребов', 'Алексей', 'Владимирович', '+79313581975'),
     Worker('Огородников', 'Алексей', 'Юрьевич', '+79313196196')
@@ -65,10 +64,13 @@ all_workers = Team('Все сотрудники', [
 team_heads = Team('Руководители', all_workers.get_by_last_names(('Борисевич', 'Добрицкий')))
 team_s1 = Team(Objects.S1, all_workers.get_by_last_names(('Харитонов', 'Гусев', 'Мулин')))
 team_s2 = Team(Objects.S2, all_workers.get_by_last_names(('Каприца', 'Горнов')))
-team_v = Team('В1-В6', all_workers.get_by_last_names(('Подольский', 'Кокоев', 'Санжара')))
-team_vols = Team(Systems.VOLS, all_workers.get_by_last_names(('Ильин', 'Ястребов', 'Огородников')))
-team_tk = Team(Systems.TK, all_workers.get_by_last_names(('Огородников', 'Ястребов', 'Ильин')))
-team_askue = Team(Systems.ASKUE, all_workers.get_by_last_names(('Ястребов', 'Огородников', 'Ильин')))
+team_v = Team('В1-В6', all_workers.get_by_last_names(('Подольский', 'Кокоев')))
+# team_vols = Team(Systems.VOLS, all_workers.get_by_last_names(('Ильин', 'Ястребов', 'Огородников')))
+# team_tk = Team(Systems.TK, all_workers.get_by_last_names(('Огородников', 'Ястребов', 'Ильин')))
+# team_askue = Team(Systems.ASKUE, all_workers.get_by_last_names(('Ястребов', 'Огородников', 'Ильин')))
+team_vols = Team(Systems.VOLS, all_workers.get_by_last_names(('Ильин', 'Ястребов')))
+team_tk = Team(Systems.TK, all_workers.get_by_last_names(('Ястребов', 'Ильин')))
+team_askue = Team(Systems.ASKUE, all_workers.get_by_last_names(('Ястребов', 'Ильин')))
 
 
 class WorkerStatus(Enum):
