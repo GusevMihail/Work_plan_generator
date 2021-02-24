@@ -114,7 +114,7 @@ class DutySchedule:
     def get_duty_str(self, target_date: date) -> str:
         for row in self.workers_rows:
             cell = self.worksheet.cell(row, self._date2col(target_date)).value
-            if cell == 15:
+            if cell == 14:
                 return str(self.worksheet.cell(row, self.workers_col).value).replace('ё', 'е')
 
     def get_performer(self, team: Team, target_date: date) -> Worker:
