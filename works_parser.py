@@ -305,9 +305,12 @@ class ParserSake(AbstractParser):
     def _get_is_multiplace(self):
         multiplace_documents = ('10.4.36',  # АИИСКУЭ для С1\Бронка\Котлин
                                 '10.4.38',  # ВОЛС для С1\Бронка\Котлин
+                                '13.0.107',  # АСУ ТП
                                 '14.0.107',  # АСУ ТП
+                                '13.0.108',  # АСУ И
                                 '14.0.108',  # АСУ И
                                 '2.1.109',  # АСУ АМ
+                                '13.0.110',  # ЛВС
                                 '14.0.110')  # ЛВС
         self.is_multiplace = self.document_id in multiplace_documents
 
