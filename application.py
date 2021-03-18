@@ -86,5 +86,12 @@ if __name__ == "__main__":
     # print(f'Всего найдено работ: {len(jobs)}')
     input()
 
-    for j in jobs:
-        print(j)
+    # for j in jobs:
+    #     print(j)
+
+    from journal import Journal, JournalASU, JournalASKUE, jobs_to_df, batch_journal_generator
+    from config_journals import batch_ASU_journals, batch_ASKUE_journals
+
+    df_jobs = jobs_to_df(jobs)
+    batch_journal_generator(df_jobs, JournalASU, batch_ASU_journals)
+    batch_journal_generator(df_jobs, JournalASKUE, batch_ASKUE_journals)
