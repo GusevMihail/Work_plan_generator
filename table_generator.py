@@ -64,7 +64,7 @@ class WorkPlan:
                     font=self._basic_font,
                     alignment=self._align_center)
         organization_col = 1
-        organization = 'ООО "Би.Си.Си."'
+        organization = 'ООО "Би.Си.Си.",\nООО "ИнТех"'
         system_col = 2
         work_col = 3
         self._ws.cell(self._current_row, work_col).alignment = self._align_left
@@ -78,11 +78,6 @@ class WorkPlan:
         work_end_col = 6
         work_end = '18:00'
         department_head_col = 7
-        from duty_schedule import team_heads
-        from application import duty_schedules
-        for schedule in duty_schedules:
-            if (schedule.month, schedule.year) == (self.jobs[0].date.month, self.jobs[0].date.year):
-                department_head = schedule.get_head(team_heads, self.jobs[0].date)
         worker_col = 8
         self._ws.cell(self._current_row, organization_col).value = organization
         self._ws.cell(self._current_row, system_col).value = job.system.value
@@ -91,9 +86,14 @@ class WorkPlan:
         self._ws.cell(self._current_row, work_start_col).value = work_start
         self._ws.cell(self._current_row, work_end_col).value = work_end
         self._ws.cell(self._current_row, department_head_col).value = \
-            f'Отдел АСУ КЗС,\n{department_head}'
+            f'Отдел АСУ КЗС,\n{self._get_department_head()}'
         self._ws.cell(self._current_row, worker_col).value = str(job.performer)
         self._current_row += 1
+
+    @staticmethod
+    def _get_department_head():
+        from duty_schedule import team_heads
+        return str(team_heads.get_by_last_name('Борисевич')) + ',\n' + str(team_heads.get_by_last_name('Добрицкий'))
 
     def make_plan(self):
         jobs_by_object = groupby(self.jobs, key=lambda i_job: i_job.object)
@@ -107,5 +107,4 @@ class WorkPlan:
         print(f' - {filename}')
         self._wb.save(filename)
         self._wb.close()
-
 # if __name__ == '__main__':

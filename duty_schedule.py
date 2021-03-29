@@ -15,7 +15,7 @@ class Worker:
         self.phone = phone
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.patronymic} {self.phone} '
+        return f'{self.last_name} {self.first_name} {self.patronymic} {self.phone}'
 
     def __repr__(self):
         return self.__str__()
@@ -34,6 +34,9 @@ class Team:
 
     def __repr__(self):
         return self.__str__()
+
+    def __getitem__(self, item):
+        return self.workers[item]
 
     def get_by_last_name(self, last_name: str) -> Worker:
         for w in self.workers:
