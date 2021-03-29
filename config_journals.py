@@ -33,10 +33,6 @@ batch_ASU_journals = {'АСУ ТП С1 Север': JournalGeneratorConfig(Syste
                       'АСУ И С2 Юг': JournalGeneratorConfig(Systems.ASU_I, Objects.S2, 'Юг'),
                       'АСУ И ЗУ': JournalGeneratorConfig(Systems.ASU_I, Objects.ZU, None),
 
-                      'АИИСКУЕ 2': JournalGeneratorConfig(Systems.ASKUE, None, None),
-                      'Тех Учет 2': JournalGeneratorConfig(Systems.TECH_REG, None, None),
-
-                      # 'ЛВС 2': JournalGeneratorConfig(Systems.LVS, None, None),  # эта версия не подходит
                       'ВОЛС': JournalGeneratorConfig(Systems.VOLS, None, None),
                       'ТК М2': JournalGeneratorConfig(Systems.TK, None, None),
                       }
@@ -48,3 +44,6 @@ batch_ASKUE_journals = {'АИИСКУЕ': JournalGeneratorConfig(Systems.ASKUE, 
                         'Тех Учет': JournalGeneratorConfig(Systems.TECH_REG, None, None),
                         'ЛВС': JournalGeneratorConfig(Systems.LVS, None, None)
                         }
+
+batch_ASU_test = {'АСУ ТП С1 Север': JournalGeneratorConfig(Systems.ASU_TP, Objects.S1, 'Север'),
+                  'АСУ И С1 Север': JournalGeneratorConfig(Systems.ASU_I, Objects.S1, 'Север')}
