@@ -39,21 +39,41 @@ class Journal(metaclass=ABCMeta):
             col_widths = tuple(col[1] for col in header)
             with pd.ExcelWriter(path=full_file_name, date_format='DD.MM.YY') as writer:
                 self.journal.to_excel(writer, sheet_name, header=header_names, index=False)
-                self._set_columns_width(writer.sheets[sheet_name], col_widths)
                 self._set_wrap_text(writer.sheets[sheet_name], (2,))
+                self._set_columns_width(writer.sheets[sheet_name], col_widths)
+                self._set_print_area(writer.sheets[sheet_name])
+                self._clear_dates(writer.sheets[sheet_name])
 
-    def _set_wrap_text(self, sheet: Worksheet, col_numbers: Tuple[int]):
+    def _set_wrap_text(self, ws: Worksheet, col_numbers: Tuple[int]):
         table_last_row = self.journal.shape[0] + 1
         for row in range(1, table_last_row + 1):
             for col in col_numbers:
-                # print(row, col)
-                sheet.cell(row, col).alignment = Alignment(wrap_text=False)
+                ws.cell(row, col).alignment = Alignment(wrap_text=False)
+        for row in range(2, table_last_row + 1):
+            date_col = 1
+            ws.cell(row, date_col).alignment = Alignment(horizontal='left')
 
     @staticmethod
-    def _set_columns_width(worksheet, col_widths):
+    def _set_columns_width(ws: Worksheet, col_widths):
         from openpyxl.utils import get_column_letter
         for i, width in enumerate(col_widths):
-            worksheet.column_dimensions[get_column_letter(i + 1)].width = width
+            ws.column_dimensions[get_column_letter(i + 1)].width = width
+
+    # @staticmethod
+    def _set_print_area(self, ws: Worksheet):
+        ws.page_setup.orientation = ws.ORIENTATION_PORTRAIT
+        ws.page_setup.paperSize = ws.PAPERSIZE_A4
+        ws.page_setup.scale = 75
+
+    def _clear_dates(self, ws: Worksheet):
+        table_last_row = self.journal.shape[0] + 1
+        date_col = 1
+        prev_date = ws.cell(row=2, column=date_col).value
+        for row in range(3, table_last_row + 1):
+            date = ws.cell(row, date_col).value
+            if date == prev_date:
+                ws.cell(row, date_col).value = ''
+            prev_date = date
 
 
 class JournalASU(Journal):
@@ -99,7 +119,10 @@ class JournalASKUE(Journal):
         self.journal = journal
 
 
-def batch_journal_generator(jobs_df: pd.DataFrame, journal_class: Type[Journal], config: dict, return_journals=True,
+def batch_journal_generator(jobs_df: pd.DataFrame,
+                            journal_class: Type[Journal],
+                            config: dict,
+                            return_journals=True,
                             save_journals=True):
     journals = {}
     for name, conf in config.items():
