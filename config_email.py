@@ -8,7 +8,6 @@ script_email_password = 'lxrhxzgwqurnvyqo'
 #                           }
 
 batch_sending_journals = {'NMulin@bcc.ru': ('АСУ ТП С1', 'АСУ И С1'),
-                          # 'AKapritsa@bcc.ru': ('С2', 'АМ', 'ЗУ'),
                           'VMakarov@bcc.ru': ('С2', 'АМ', 'ЗУ'),
                           'MKokoev@bcc.ru': ('В1', 'В2', 'В3', 'В4', 'В5', 'В6'),
                           'APodolskij@bcc.ru': ('В1', 'В2', 'В3', 'В4', 'В5', 'В6'),
@@ -18,3 +17,12 @@ batch_sending_journals = {'NMulin@bcc.ru': ('АСУ ТП С1', 'АСУ И С1'),
                           }
 
 batch_sending_plans = {'kzs.asu.504@gmail.com': ('',)}
+
+batch_sending_calendars = {
+    'NMulin@bcc.ru': ('С1',),
+    'VMakarov@bcc.ru': ('С2',),
+    'MKokoev@bcc.ru': ('В1-В6',),
+    'APodolskij@bcc.ru': ('В1-В6',),
+    'AIlin@bcc.ru': ('Оптика',),
+    'AYastrebov@bcc.ru': ('Энергетика',),
+}

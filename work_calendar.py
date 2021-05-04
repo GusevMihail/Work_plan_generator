@@ -11,9 +11,12 @@ def concat_agg(iterable_value):
 
 def make_calendar(pivot_table: pd.DataFrame,
                   description: config_work_calendar.CalendarDescription,
-                  path=r'output data/',
+                  path=r'output data/calendars/',
                   sheet_name='Sheet1'):
-    with pd.ExcelWriter(path=path + 'Календарь работ ' + description.name + '.xlsx',
+    from datetime import datetime
+    date = pivot_table.columns[0]
+    date = datetime.strftime(date, '%Y %m')
+    with pd.ExcelWriter(path=path + date + ' Календарь работ ' + description.name + '.xlsx',
                         date_format='DD.MM', datetime_format='DD.MM') as writer:
         pivot_table.to_excel(writer, sheet_name)
         ws = writer.sheets[sheet_name]
