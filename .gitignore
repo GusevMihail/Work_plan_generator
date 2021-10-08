@@ -1,12 +1,11 @@
+.idea
+/.ipynb_checkpoints
 /output data/*
 /venv/
-/input data/АИИСКУЭ/
-/input data/АСУ/
-/input data/ВОЛС/
-/input data/Графики дежурств/
-/input data/Телеканал/
-/input data/Тех.учет/
-/input data/2019.rar
+/input data/_*
+/input data/SAKE
+/input data/Графики дежурств
+
 
 .gitignore
 .idea/.gitignore

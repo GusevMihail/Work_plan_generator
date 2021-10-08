@@ -65,38 +65,6 @@ class Job:
                f'date:{self.date};  sys:{self.system}; performer:{self.performer}'
 
 
-# TODO delete code below
-# def find_worker(self):
-#     group_s1 = ('Гусев Михаил Владимирович +79675904368',
-#                 'Харитонов Виктор Яковлевич +79319642368',
-#                 'Мулин Николай Николаевич +79112283889',
-#                 'Кушмылев Евгений Павлович +79819134737')
-#
-#     group_s2 = ('Каприца Анатолий Евгеньевич +79046315018',
-#                 # 'Макаров Виктор Викторович +79312089129',
-#                 'Горнов Александр Серафимович +79111314015')
-#
-#     group_v = ('Подольский Андрей Вениаминович +79312531066',
-#                'Кокоев Михаил Николаевич +79216441993',
-#                'Санжара Владимир Александрович +79819629285')
-#
-#     group_vols = ('Ильин Андрей Владимирович +79219303652',
-#                   'Ястребов Алексей Владимирович +79313581975',
-#                   'Огородников Алексей Юрьевич +79313196196')
-#
-#     random.seed(self.date)
-#     if self.system in (Systems.LVS, Systems.VOLS, Systems.TK, Systems.ASKUE, Systems.TECH_REG):
-#         self.performer = random.choice(group_vols)
-#     elif self.object == Objects.S1:
-#         self.performer = random.choice(group_s1)
-#     elif self.object == Objects.S2:
-#         self.performer = random.choice(group_s2)
-#     elif self.object == Objects.ZU:
-#         self.performer = random.choice(group_s2)
-#     else:
-#         self.performer = random.choice(group_v)
-
-
 def find_num_in_str(string: str) -> Optional[int]:
     result = re.findall(r'\d+', string)
     if len(result) > 0:
