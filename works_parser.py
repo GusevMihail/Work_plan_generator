@@ -303,8 +303,8 @@ class ParserSake(AbstractParser):
         #       f'last col {self._data_last_col}, rows {self._data_rows}')  # debug
 
     def _get_is_multiplace(self):
-        multiplace_documents = ('10.4.36',  # АИИСКУЭ для С1\Бронка\Котлин
-                                '10.4.38',  # ВОЛС для С1\Бронка\Котлин
+        multiplace_documents = ('10.4.36',  # АИИСКУЭ для С1\Бронка ПС86\Котлин
+                                '10.4.38',  # ВОЛС для С1\Бронка ПС86\Котлин
                                 '13.0.107',  # АСУ ТП
                                 '14.0.107',  # АСУ ТП
                                 '13.0.108',  # АСУ И
@@ -330,6 +330,18 @@ class ParserSake(AbstractParser):
                 cell = xstr(self.get_cell(row, col))
                 if cell is not None:
                     day = xint(self.get_cell(self._days_row, col))
+
+                    # заменяем place С1ПС110/10 -> ПС86 для ВОЛС по номеру техкарты
+                    ps86_vols_tech_maps = (
+                        'Технологическая карта 3/2/2016',
+                        'Технологическая карта 15/2/2016',
+                        'Технологическая карта 16/2/2016',
+                        'Технологическая операция 3/2/2016',
+                        'Технологическая операция 15/2/2016',
+                        'Технологическая операция 16/2/2016',
+                    )
+                    if self.system == Systems.VOLS and (tech_map in ps86_vols_tech_maps):
+                        place = pre_processing.Objects.PS86.value
 
                     i_raw_data = RawData(day, work_type, place, tech_map, equip_name)
                     if i_raw_data not in self.raw_data:

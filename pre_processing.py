@@ -28,7 +28,7 @@ class Objects(Enum):
     ZU = 'Здание управления КЗС'
     PS360 = 'ПС 110/35/6кВ №360'
     # PS360 = 'Горская'
-    PS86 = 'ПС 110/10/6кВ №86'
+    PS86 = 'ПС 110/35/10кВ №86'
     PS223 = 'Бронка'
     KOTLIN = 'Котлин'
 
@@ -118,7 +118,7 @@ def extract_place_and_object(raw_place: str):
                     ('ПС', '223'): ('ПС 223', Objects.PS223),
                     ('ПС', '360'): ('ПС 110/35/6кВ №360', Objects.PS360),
                     ('Горская',): ('Горская', Objects.S1),
-                    ('ПС', '86'): ('ПС 110/10/6кВ №86', Objects.S1),
+                    ('ПС', '86'): ('ПС 110/35/10кВ №86', Objects.S1),
                     ('Котлин',): ('ПС Котлин', Objects.S1),
                     ('ПС', 'С1', '110'): ('С1 ПС 110/10кВ', Objects.S1),
                     ('ПС', 'С2', '110'): ('С2 ПС 110/10кВ', Objects.S2),
@@ -192,15 +192,8 @@ def parser_to_jobs(parser) -> List[Job]:
     jobs: List[Job] = []
     month, year = extract_month_and_year(parser.month_year)
 
-    # #TODO это временный код, его необходимо удалить!
-    # year = 2021
-
     # system = find_system_by_sheet(parser.sheet.title)
     for raw_job in parser.raw_data:
-
-        # # TODO это временный код, его необходимо удалить!
-        # if month == 2 and raw_job.day == 29:
-        #     continue
 
         job = Job()
         job.place, job.object = extract_place_and_object(raw_job.place)
