@@ -26,17 +26,17 @@ batch_ASU_journals = {
     'АСУ ТП В6': JournalGeneratorConfig(Systems.ASU_TP, Objects.V6, None),
     'АСУ ТП ЗУ': JournalGeneratorConfig(Systems.ASU_TP, Objects.ZU, None),
 
-                      'АСУ АМ С2': JournalGeneratorConfig(Systems.ASU_AM, Objects.S2, None),
+    'АСУ АМ С2': JournalGeneratorConfig(Systems.ASU_AM, Objects.S2, None),
 
-                      'АСУ И С1 Север': JournalGeneratorConfig(Systems.ASU_I, Objects.S1, 'Север'),
-                      'АСУ И С1 Юг': JournalGeneratorConfig(Systems.ASU_I, Objects.S1, 'Юг'),
-                      'АСУ И С2 Север': JournalGeneratorConfig(Systems.ASU_I, Objects.S2, 'Север'),
-                      'АСУ И С2 Юг': JournalGeneratorConfig(Systems.ASU_I, Objects.S2, 'Юг'),
-                      'АСУ И ЗУ': JournalGeneratorConfig(Systems.ASU_I, Objects.ZU, None),
+    'АСУ И С1 Север': JournalGeneratorConfig(Systems.ASU_I, Objects.S1, 'Север'),
+    'АСУ И С1 Юг': JournalGeneratorConfig(Systems.ASU_I, Objects.S1, 'Юг'),
+    'АСУ И С2 Север': JournalGeneratorConfig(Systems.ASU_I, Objects.S2, 'Север'),
+    'АСУ И С2 Юг': JournalGeneratorConfig(Systems.ASU_I, Objects.S2, 'Юг'),
+    'АСУ И ЗУ': JournalGeneratorConfig(Systems.ASU_I, Objects.ZU, None),
 
-                      'ВОЛС': JournalGeneratorConfig(Systems.VOLS, None, None),
-                      'ТК М2': JournalGeneratorConfig(Systems.TK, None, None),
-                      }
+    'ВОЛС': JournalGeneratorConfig(Systems.VOLS, None, None),
+    'ТК М2': JournalGeneratorConfig(Systems.TK, None, None),
+}
 
 default_header_ASKUE = (
     ('Дата', 10), ('Место', 30), ('Оборудование', 30), ('Тип', 7), ('Тех. карта', 32), ('Исполнитель', 15))

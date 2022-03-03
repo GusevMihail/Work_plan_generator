@@ -4,10 +4,15 @@ from typing import List, Tuple, Union, Any
 
 import openpyxl
 
+import config_email
+import duty_schedule
+import email_processing
 import table_generator
 import works_parser
-import duty_schedule
+from config_journals import batch_ASU_journals, batch_ASKUE_journals
+from journal import JournalASU, JournalASKUE, jobs_to_df, batch_journal_generator
 from pre_processing import find_system_by_sheet, Job, parser_to_jobs
+from work_calendar import batch_make_calendars
 
 
 def get_xlsx_files(path):
@@ -66,7 +71,7 @@ def make_xlsx_from_jobs(jobs_list: List[Job]):
         table = table_generator.WorkPlan(day_jobs, template_filename)
         table.make_plan()
         table.save_file()
-    print('Генерация успешно завершена')
+    print('Генерация успешно завершена \n')
 
 
 duty_schedules = process_duty_schedules(r'.\input data\Графики дежурств')
@@ -81,17 +86,60 @@ if __name__ == "__main__":
     # jobs.extend(process_files(r'.\input data\АИИСКУЭ', find_sheets_vols, works_parser.ParserAskueSake))
     # jobs.extend(process_files(r'.\input data\Тех.учет', find_sheets_vols, works_parser.ParserTechReg))
     print(f'Всего найдено работ: {len(jobs)}')
+
     make_xlsx_from_jobs(jobs)
 
     # print(f'Всего найдено работ: {len(jobs)}')
-    input()
+    # input()
 
     # for j in jobs:
     #     print(j)
 
-    from journal import Journal, JournalASU, JournalASKUE, jobs_to_df, batch_journal_generator
-    from config_journals import batch_ASU_journals, batch_ASKUE_journals
-
     df_jobs = jobs_to_df(jobs)
-    batch_journal_generator(df_jobs, JournalASU, batch_ASU_journals)
-    batch_journal_generator(df_jobs, JournalASKUE, batch_ASKUE_journals)
+
+    print('Генерация журналов работ')
+    batch_journal_generator(df_jobs, JournalASU, batch_ASU_journals, verbose=True)
+    batch_journal_generator(df_jobs, JournalASKUE, batch_ASKUE_journals, verbose=True)
+    print('Генерация успешно завершена \n')
+
+    print('Генерация календарей работ')
+    batch_make_calendars(df_jobs, verbose=True)
+    print('Генерация успешно завершена \n')
+
+    is_sand_plans, is_sand_journals, is_sand_calendars = [False] * 3
+    while (answer := input('send all files? [y]/n\n')) not in ('y', 'n', ''):
+        pass
+    else:
+        if answer == 'y' or '':
+            is_sand_plans, is_sand_journals, is_sand_calendars = [True] * 3
+        else:
+            while (answer := input('send plans? [y]/n\n')) not in ('y', 'n', ''):
+                pass
+            else:
+                is_sand_plans = (answer == 'y' or '')
+
+            while (answer := input('send journals? [y]/n\n')) not in ('y', 'n', ''):
+                pass
+            else:
+                is_sand_journals = (answer == 'y' or '')
+
+            while (answer := input('send calendars? [y]/n\n')) not in ('y', 'n', ''):
+                pass
+            else:
+                is_sand_calendars = (answer == 'y' or '')
+
+    if is_sand_plans:
+        email_processing.send_journals(config_email.batch_sending_plans,
+                                       attachment_folder=r'./output data/plans/',
+                                       mail_subj='планы работ',
+                                       add_month_to_subj=True, test_mod=False)
+    if is_sand_journals:
+        email_processing.send_journals(config_email.batch_sending_journals,
+                                       attachment_folder=r'./output data/journals/',
+                                       mail_subj='журналы работ',
+                                       add_month_to_subj=True, test_mod=False)
+    if is_sand_calendars:
+        email_processing.send_journals(config_email.batch_sending_calendars,
+                                       attachment_folder=r'./output data/calendars/',
+                                       mail_subj='календарь работ',
+                                       add_month_to_subj=True, test_mod=False)

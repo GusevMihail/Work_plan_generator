@@ -44,8 +44,9 @@ def calendar_pivot_table(df: pd.DataFrame, description: config_work_calendar.Cal
     return pivot
 
 
-def batch_make_calendars(df: pd.DataFrame):
+def batch_make_calendars(df: pd.DataFrame, verbose=False):
     for description in config_work_calendar.calendars_settings:
-        print(description.name)
+        if verbose:
+            print(description.name)
         pivot = calendar_pivot_table(df, description)
         make_calendar(pivot, description)

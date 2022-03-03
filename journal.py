@@ -123,9 +123,12 @@ def batch_journal_generator(jobs_df: pd.DataFrame,
                             journal_class: Type[Journal],
                             config: dict,
                             return_journals=True,
-                            save_journals=True):
+                            save_journals=True,
+                            verbose=False):
     journals = {}
     for name, conf in config.items():
+        if verbose:
+            print(name)
         sys, obj, place_filter = conf
         j = journal_class(jobs_df)
         j.make_journal(sys, obj, place_filter)
